@@ -1,0 +1,50 @@
+{
+  "slug": "_scaffold",
+  "tasks": [
+    {
+      "id": "S1",
+      "title": "Create the Astro 7 project: package.json, astro.config with @astrojs/react (react 18) and @tailwindcss/vite, tsconfig, folder layout, an empty index page",
+      "layer": "scaffold",
+      "deps": [],
+      "acs": [],
+      "dod": "Skeleton smoke test: with Node >= 22.23.4, `npm install` then `npm run build` succeeds and writes dist/index.html; the folders src/pages, src/layouts, src/components, src/lib, src/styles, public exist",
+      "files_hint": ["package.json", "astro.config.mjs", "tsconfig.json", "src/pages/index.astro", ".nvmrc"]
+    },
+    {
+      "id": "S2",
+      "title": "Wire the test harness and type check: `npm test` (node --test \"src/**/*.test.ts\") with one smoke test in src/lib, and `npm run check` (astro check)",
+      "layer": "scaffold",
+      "deps": ["S1"],
+      "acs": [],
+      "dod": "Skeleton smoke test: `npm test` runs and the smoke test passes; `npm run check` reports 0 errors; `npm run build` still succeeds",
+      "files_hint": ["src/lib/smoke.test.ts", "package.json"]
+    },
+    {
+      "id": "S3",
+      "title": "Add BaseLayout.astro (lang, meta description, viewport, Inter + Space Grotesk fonts, GTM-KJVX8GRG head + noscript snippets) and src/styles/global.css with Tailwind 4 @theme brand tokens (brand #f07c1a, display Space Grotesk, body Inter, cream #faf8f5); index.astro uses the layout",
+      "layer": "scaffold",
+      "deps": ["S1"],
+      "acs": [],
+      "dod": "Skeleton smoke test: `npm run build` succeeds; dist/index.html contains GTM-KJVX8GRG and a class using the brand token; `npm run check` reports 0 errors",
+      "files_hint": ["src/layouts/BaseLayout.astro", "src/styles/global.css", "src/pages/index.astro"]
+    },
+    {
+      "id": "S4",
+      "title": "Add the GitHub Actions workflow: on push to main install, `npm test`, `npm run check`, `npm run build`, publish dist/ to GitHub Pages (no CNAME until the address is chosen)",
+      "layer": "scaffold",
+      "deps": ["S2", "S3"],
+      "acs": [],
+      "dod": "Skeleton smoke test: the workflow YAML is valid; its commands are exactly the package.json scripts; the Node version in CI satisfies >= 22.23.4",
+      "files_hint": [".github/workflows/deploy.yml"]
+    },
+    {
+      "id": "S5",
+      "title": "Write CLAUDE.md from docs/architecture-map.md: stack, commands, folder layout, conventions (static by default, React islands only for interactivity, copied-from-app header comments, dataLayer event names, HubSpot form constraint)",
+      "layer": "scaffold",
+      "deps": ["S1"],
+      "acs": [],
+      "dod": "CLAUDE.md exists and matches the foundation map's commands, layout and conventions",
+      "files_hint": ["CLAUDE.md"]
+    }
+  ]
+}
