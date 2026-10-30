@@ -81,7 +81,7 @@ Target layout; nothing exists yet.
 | Trial form | `src/components/trial-form/` | ui (React island) | `<TrialForm client:visible />` in a section | Form UI and states, copied from the app |
 | Form logic | `src/lib/` | pure TS | imported by the trial form | `hubspot.ts`, `validate.ts`, `options.ts`, each with `*.test.ts` |
 | Styles | `src/styles/global.css` | tokens | imported by `BaseLayout.astro` | Tailwind 4 import + `@theme` brand tokens |
-| Static files | `public/` | assets | served as-is | Images, favicon, `CNAME` (once the address is chosen) |
+| Static files | `public/` | assets | served as-is | Images, favicon (`CNAME` is written by the deploy workflow) |
 
 ## Conventions (the rules a new feature must match)
 
@@ -147,8 +147,9 @@ Target layout; nothing exists yet.
   `hubspotutk` cookie and page URL, so the Leads Bot, the deal pipeline and the Monday report keep
   working (brief §5).
 - **Tracking stays in GTM `GTM-KJVX8GRG`**; no separate GA4/Clarity snippets.
-- **Address not chosen yet** (brief §8). Deploy works on the default GitHub Pages URL until a
-  `CNAME` and DNS record are added.
+- **Address: `landing.englishpusher.in.ua`** (owner decision 2026-10-30, roadmap D3). The deploy
+  workflow publishes with `cname:`; it needs a DNS `CNAME` record `landing` →
+  `tauruskin.github.io` at the `englishpusher.in.ua` registrar. Moodle on the apex is untouched.
 - **Duplicated form code** with `app-englishpusher` (by decision, ADR-0003): a change to the
   HubSpot fields must be made in both repos.
 - **Content is blocked on Tetiana** (brief outcome `needs-evidence`): the foundation does not

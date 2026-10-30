@@ -45,10 +45,11 @@ Strangers who arrive from Tetiana's social posts, Google or a shared link reach 
 |---|---|:---:|:---:|:---:|
 | D1 | Does Tetiana want this page, and what will she offer, price, promise and supply (story, testimonials, photos)? | grilling | human | 3 |
 | D2 | Do her social posts drive clicks? A 2–3 week UTM link test to the app's `#trial-lesson` form, read in GA4 and the Monday report. Little volume means improving the app hub instead of building this page | task | human | 3 |
-| D3 | Which separate address: a subdomain of `englishpusher.in.ua` or a new domain? | grilling | human | 4 |
 | D4 | Who keeps prices, availability and testimonials up to date after launch? | grilling | human | 6 |
 
 ## Decisions so far
+
+- Address (was D3): the subdomain `landing.englishpusher.in.ua` — owner decision 2026-10-30; `cname:` in the deploy workflow and `site` in `astro.config.mjs`
 
 - Astro static site with one React island for the trial form → [`docs/adr/0001-astro-static-site-with-react-island.md`](adr/0001-astro-static-site-with-react-island.md)
 - Hosted on GitHub Pages, deployed by GitHub Actions → [`docs/adr/0002-host-on-github-pages-via-actions.md`](adr/0002-host-on-github-pages-via-actions.md)
