@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Brand tokens, ported from app-englishpusher (tailwind.config.js + src/index.css). */
+@theme {
+  --color-brand: #f07c1a;
+  --color-cream: #faf8f5;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+@layer base {
+  html,
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--color-cream);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+}
