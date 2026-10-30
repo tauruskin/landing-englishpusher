@@ -31,7 +31,7 @@ src/layouts/BaseLayout.astro  <head>: meta/SEO, fonts, GTM snippet, global CSS
 src/components/               static sections (<Name>.astro); React islands in <name>/ folders
 src/lib/                      pure TS logic, each file with a sibling *.test.ts
 src/styles/global.css         Tailwind import + @theme brand tokens
-public/                       served as-is (images, favicon, CNAME once the address is chosen)
+public/                       served as-is (images, favicon)
 ```
 
 ## Conventions
@@ -53,8 +53,7 @@ public/                       served as-is (images, favicon, CNAME once the addr
   to the HubSpot fields must be made in both this repo and `app-englishpusher`.
 - **Error handling:** the form never loses typed answers; a failed submit shows a fallback message
   with a contact link and keeps the values.
-- **Base path:** `astro.config.mjs` reads `BASE_PATH` (set in CI for the default
-  `tauruskin.github.io/landing-englishpusher/` URL). Use `import.meta.env.BASE_URL` for internal
-  links and asset paths. When a custom address is chosen: add `cname:` to the workflow and remove
-  `BASE_PATH`.
+- **Address:** `https://landing.englishpusher.in.ua` — `site` in `astro.config.mjs`, `cname:` in
+  the deploy workflow (it writes `CNAME` into the published branch). Served from `/`, no base path.
+  The Moodle site on `englishpusher.in.ua` itself is untouched.
 - No datastore, no migrations, no stored IDs.
