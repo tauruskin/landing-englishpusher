@@ -225,6 +225,66 @@
       ],
       "file": "docs/features/landing-page/tasks/t11-release-checklist.md",
       "status": "done"
+    },
+    {
+      "id": "T12",
+      "title": "Pin two hubspot.ts edge cases: an answer just before the 15 s cut-off and an answer body that never changes the result",
+      "layer": "domain",
+      "deps": [
+        "T3"
+      ],
+      "acs": [
+        "AC-05",
+        "AC-09"
+      ],
+      "dod": "hubspot.test.ts asserts that a 2xx answer at 14,999 ms under mock timers is {ok:true} and that a 2xx whose body says the contact already exists is {ok:true}; npm test green.",
+      "files_hint": [
+        "src/lib/hubspot.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t12-hubspot-edge-tests.md",
+      "status": "todo"
+    },
+    {
+      "id": "T13",
+      "title": "Move the form's user-facing strings into one exported copy object and check it with findPromises",
+      "layer": "ui",
+      "deps": [
+        "T9"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "src/lib/formCopy.ts exports the form's copy (headline, subline, labels, placeholders, thank-you, send-failed banner, buttons); TrialForm.tsx renders only from it; formCopy.test.ts runs findPromises over every string (and the GOALS/LEVELS labels) and passes; npm test + tsc green.",
+      "files_hint": [
+        "src/lib/formCopy.ts",
+        "src/lib/formCopy.test.ts",
+        "src/components/trial-form/TrialForm.tsx"
+      ],
+      "file": "docs/features/landing-page/tasks/t13-form-copy.md",
+      "status": "todo"
+    },
+    {
+      "id": "T14",
+      "title": "Add the Local UI pass to the release checklist: one checkbox per e2e-through-UI row of AC-01..04, 08, 09",
+      "layer": "docs",
+      "deps": [
+        "T11",
+        "T13"
+      ],
+      "acs": [
+        "AC-01",
+        "AC-02",
+        "AC-03",
+        "AC-04",
+        "AC-08",
+        "AC-09"
+      ],
+      "dod": "release-checklist.md §2 has a 'Local UI pass (preview, Test form)' block with one checkbox per manual e2e-through-UI row of spec.md test plan for AC-01, AC-02, AC-03, AC-04, AC-08, AC-09, each naming its AC and owner; links resolve.",
+      "files_hint": [
+        "docs/features/landing-page/release-checklist.md"
+      ],
+      "file": "docs/features/landing-page/tasks/t14-checklist-ui-pass.md",
+      "status": "todo"
     }
   ]
 }
