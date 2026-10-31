@@ -1,6 +1,6 @@
 ---
 status: living
-updated_at: "2026-10-30"
+updated_at: "2026-10-31"
 ---
 
 # Roadmap — landing-englishpusher
@@ -20,9 +20,9 @@ Strangers who arrive from Tetiana's social posts, Google or a shared link reach 
 | # | Step | Source | Size | Status |
 |---|---|---|:---:|---|
 | 1 | Project skeleton (`scaffold`): Astro 7 + React island + Tailwind 4, BaseLayout with GTM, tests and type check, GitHub Pages deploy on the default URL | [architecture-map.md §C4 — target foundation](architecture-map.md) | S | idea |
-| 2 | Trial form on the page: a visitor sends a trial request from the page into the HubSpot form "Trial lesson request" (with `hubspotutk` and page URL), and `trial_form_open` / `generate_lead` reach GTM | [idea-brief.md §5. Out of scope](idea-brief.md) (constraint to preserve) | S | idea |
+| 2 | Trial form on the page: a visitor sends a trial request from the page into the HubSpot form "Trial lesson request" (with `hubspotutk` and page URL), and `trial_form_open` / `generate_lead` reach GTM | [idea-brief.md §5. Out of scope](idea-brief.md) (constraint to preserve) | S | spec'd → [landing-page](features/landing-page/spec.md) |
 | 3 | Sales content that persuades strangers → see [Not yet specified](#not-yet-specified) | [idea-brief.md §7. Recommendation](idea-brief.md) | fog | idea |
-| 4 | Own address, ready for search: the page is served at its chosen address (CNAME + DNS), with canonical, Open Graph, sitemap and robots so Google can index it | [idea-brief.md §8. Open questions](idea-brief.md) (separate address) | S | idea |
+| 4 | Own address, ready for search: the page is served at its chosen address (CNAME + DNS), with canonical, Open Graph, sitemap and robots so Google can index it | [idea-brief.md §8. Open questions](idea-brief.md) (separate address) | S | spec'd → [landing-page](features/landing-page/spec.md) |
 | 5 | Reports tell landing leads apart: the Monday report and Leads Bot cards show which leads came from the landing page and which came from the app | [idea-brief.md §7. Recommendation](idea-brief.md) ("attributed to the page in HubSpot") | S | idea |
 | 6 | Launch: Tetiana's Instagram/LinkedIn bio links and post links (with UTM tags) point to the page instead of the app | [idea-brief.md §3. Users](idea-brief.md) (how they arrive) | XS | idea |
 
@@ -50,6 +50,7 @@ Strangers who arrive from Tetiana's social posts, Google or a shared link reach 
 ## Decisions so far
 
 - Address (was D3): the subdomain `landing.englishpusher.in.ua` — owner decision 2026-10-30; `cname:` in the deploy workflow and `site` in `astro.config.mjs`
+- Steps 2 and 4 specified together as the "sales skeleton" before D1/D2 resolve (owner scope change 2026-10-31): English like the app, the form in a window from every CTA, and the page search-ready but asking not to be indexed until step 3's content replaces the interim copy → [`features/landing-page/spec.md`](features/landing-page/spec.md)
 
 - Astro static site with one React island for the trial form → [`docs/adr/0001-astro-static-site-with-react-island.md`](adr/0001-astro-static-site-with-react-island.md)
 - Hosted on GitHub Pages, deployed by GitHub Actions → [`docs/adr/0002-host-on-github-pages-via-actions.md`](adr/0002-host-on-github-pages-via-actions.md)
