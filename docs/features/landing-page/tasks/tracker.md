@@ -10,7 +10,7 @@
 |---|---|---|---|---|---|---|---|
 | T1 | site.ts: live host, isPublished, form IDs, INTERIM_COPY | domain | Oleksandr Pushkar (Operator) | S | — | blocked | SELECT — Test form ID not created yet (spec §8) |
 | T2 | Copy validate.ts + options.ts, pin parity, add LinkedIn | domain | Oleksandr Pushkar (Operator) | S | — | done | COMMIT |
-| T3 | Copy hubspot.ts: entry address, 15 s cut-off, failure kind | domain | Oleksandr Pushkar (Operator) | M | — | todo | — |
+| T3 | Copy hubspot.ts: entry address, 15 s cut-off, failure kind | domain | Oleksandr Pushkar (Operator) | M | — | done | COMMIT |
 | T4 | events.ts: three dataLayer payloads | domain | Oleksandr Pushkar (Operator) | S | — | todo | — |
 | T5 | seo.ts: robots meta, robots.txt, sitemap.xml | domain | Oleksandr Pushkar (Operator) | S | T1 | blocked | dep T1 blocked |
 | T6 | BaseLayout head + robots/sitemap routes | wiring | Oleksandr Pushkar (Operator) | M | T1, T5 | blocked | dep T1 blocked |
