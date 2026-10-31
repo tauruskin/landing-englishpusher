@@ -1,87 +1,74 @@
 ---
-// "How it works" tour (spec docs/superpowers/specs/2026-10-31-tour-strip-design.md): a CSS
-// scroll-snap strip of phone-framed screenshots. Swiping and scrolling work with no JS. The
-// inline script below is progressive enhancement: it reveals the desktop arrows (scroll by one
-// card) and lights up a dot for every card fully in view. All text comes from tour.ts.
-import { TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES } from "../lib/tour.ts";
+// "How it works" tour (tour spec + redesign spec, Page 4): a CSS scroll-snap strip of
+// phone-framed screenshots. Swiping and scrolling work with no JS. The inline script is
+// progressive enhancement: it reveals the arrows (scroll by one card) and marks a step "reached"
+// when its card is fully in view or lies to the left of the view; reached steps turn the
+// numbered progress line orange. All text comes from tour.ts.
+import { TOUR_FACTS, TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES } from "../lib/tour.ts";
 
-const arrowClass = [
-  "flex h-9 w-9 items-center justify-center rounded-full bg-white text-lg text-neutral-900 shadow-sm",
-  "transition-opacity hover:bg-cream disabled:cursor-default disabled:opacity-40",
-  "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand",
-].join(" ");
+const arrowBase =
+  "grid h-12 w-12 place-items-center rounded-full text-xl shadow-sm transition disabled:cursor-default disabled:opacity-40 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2";
 ---
 
-<section aria-labelledby="tour-heading" class="py-12" data-tour>
-  <div class="flex items-end justify-between gap-4">
-    <div>
-      <h2 id="tour-heading" class="font-display text-2xl font-bold text-neutral-900 sm:text-3xl">
-        {TOUR_HEADING.title}
-      </h2>
-      <p class="mt-2 text-neutral-600">{TOUR_HEADING.subline}</p>
+<section aria-labelledby="tour-heading" class="bg-cream py-20 md:py-24" data-tour>
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="grid gap-8 md:grid-cols-[1fr_auto] md:items-end" data-reveal>
+      <div>
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-brand">{TOUR_HEADING.title}</p>
+        <h2 id="tour-heading" class="mt-2 max-w-[22ch] font-display text-4xl font-bold tracking-tight md:text-5xl">
+          {TOUR_HEADING.subline}
+        </h2>
+        <ul class="mt-5 flex flex-wrap gap-2 text-sm font-medium" role="list">
+          {TOUR_FACTS.map((fact) => <li class="rounded-full border border-stone-300 px-3 py-1.5">{fact}</li>)}
+        </ul>
+      </div>
+      <div class="hidden gap-2 md:flex" data-tour-nav hidden>
+        <button type="button" class={`${arrowBase} bg-white text-stone-900`} aria-label={TOUR_LABELS.previous} data-tour-prev>
+          <span aria-hidden="true">‹</span>
+        </button>
+        <button type="button" class={`${arrowBase} bg-stone-900 text-cream`} aria-label={TOUR_LABELS.next} data-tour-next>
+          <span aria-hidden="true">›</span>
+        </button>
+      </div>
     </div>
-    <div class="hidden gap-2 sm:flex" data-tour-nav hidden>
-      <button type="button" class={arrowClass} aria-label={TOUR_LABELS.previous} data-tour-prev>
-        <span aria-hidden="true">‹</span>
-      </button>
-      <button type="button" class={arrowClass} aria-label={TOUR_LABELS.next} data-tour-next>
-        <span aria-hidden="true">›</span>
-      </button>
-    </div>
-  </div>
 
-  <ol
-    tabindex="0"
-    role="list"
-    aria-labelledby="tour-heading"
-    data-tour-track
-    class={[
-      "-mx-6 mt-6 flex scroll-px-6 snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-2 motion-reduce:scroll-auto",
-      "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-      "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand",
-    ].join(" ")}
-  >
-    {
-      TOUR_SLIDES.map((slide) => (
-        <li
-          class="shrink-0 basis-[80%] snap-start rounded-3xl bg-white p-4 shadow-sm sm:basis-[calc((100%-2rem)/3)]"
-        >
-          <div class="mx-auto w-40 overflow-hidden rounded-[1.75rem] border-[6px] border-neutral-900 bg-white sm:w-36">
-            <img
-              src={slide.image}
-              alt={slide.alt}
-              width={slide.width}
-              height={slide.height}
-              loading="lazy"
-              decoding="async"
-              class="block h-auto w-full"
-            />
-          </div>
-          <p class="mt-4 font-display text-base font-semibold text-neutral-900">
-            <span class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand text-sm font-bold text-neutral-900">{slide.step}</span>{slide.title}
-          </p>
-          <p class="mt-1 text-sm text-neutral-600">{slide.caption}</p>
-        </li>
-      ))
-    }
-  </ol>
-
-  <div aria-hidden="true" class="mt-4 flex justify-center gap-1.5" data-tour-dots>
-    {
-      TOUR_SLIDES.map((_, i) => (
-        <span
-          data-dot
-          class={`h-1.5 rounded-full transition-all ${i === 0 ? "w-5 bg-brand" : "w-1.5 bg-neutral-300"}`}
-        />
-      ))
-    }
+    <ol
+      tabindex="0"
+      role="list"
+      aria-labelledby="tour-heading"
+      data-tour-track
+      class={[
+        "-mx-6 mt-12 flex scroll-px-6 snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-6 pb-4 motion-reduce:scroll-auto",
+        "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand",
+      ].join(" ")}
+    >
+      {
+        TOUR_SLIDES.map((slide, i) => (
+          <li class="group shrink-0 basis-[80%] snap-start sm:basis-[calc((100%-3rem)/3)]" data-reached={i === 0 ? "" : undefined}>
+            <div aria-hidden="true" class="flex items-center gap-3">
+              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white font-display font-bold text-stone-500 transition-colors group-data-[reached]:bg-brand group-data-[reached]:text-stone-900">
+                {slide.step}
+              </span>
+              <span class="h-0.5 flex-1 bg-stone-200 transition-colors group-data-[reached]:bg-brand" />
+            </div>
+            <div class="mt-6 rounded-[2rem] bg-white p-5 shadow-[0_20px_40px_-24px_rgba(120,60,10,0.3)]">
+              <div class="mx-auto w-44 overflow-hidden rounded-[1.9rem] border-[7px] border-stone-900 bg-white">
+                <img src={slide.image} alt={slide.alt} width={slide.width} height={slide.height} loading="lazy" decoding="async" class="block h-auto w-full" />
+              </div>
+            </div>
+            <p class="mt-5 font-display text-xl font-bold">{slide.title}</p>
+            <p class="mt-1 text-stone-600">{slide.caption}</p>
+          </li>
+        ))
+      }
+    </ol>
   </div>
 </section>
 
 <script>
-  // Progressive enhancement: without this script the strip still swipes and scrolls, and the
-  // arrows stay hidden. With it, the arrows scroll by one card, and the dots light up for every
-  // card fully in view (one on a phone, about three on desktop).
+  // Progressive enhancement: without this script the strip still swipes and scrolls, the arrows
+  // stay hidden and only step 1 is marked reached.
   const root = document.querySelector<HTMLElement>("[data-tour]");
   const track = root?.querySelector<HTMLElement>("[data-tour-track]");
   const nav = root?.querySelector<HTMLElement>("[data-tour-nav]");
@@ -89,25 +76,23 @@ const arrowClass = [
   const next = root?.querySelector<HTMLButtonElement>("[data-tour-next]");
   if (root && track && nav && prev && next) {
     const cards = Array.from(track.children) as HTMLElement[];
-    const dots = Array.from(root.querySelectorAll<HTMLElement>("[data-dot]"));
     const cardStep = () => cards[0].offsetWidth + (parseFloat(getComputedStyle(track).columnGap) || 0);
     const maxScroll = () => track.scrollWidth - track.clientWidth;
 
     const update = () => {
       const view = track.getBoundingClientRect();
-      cards.forEach((card, i) => {
+      for (const card of cards) {
         const box = card.getBoundingClientRect();
-        const inView = box.left >= view.left - 1 && box.right <= view.right + 1;
-        dots[i]?.classList.toggle("w-5", inView);
-        dots[i]?.classList.toggle("bg-brand", inView);
-        dots[i]?.classList.toggle("w-1.5", !inView);
-        dots[i]?.classList.toggle("bg-neutral-300", !inView);
-      });
+        card.toggleAttribute("data-reached", box.right <= view.right + 1);
+      }
       prev.disabled = track.scrollLeft <= 1;
       next.disabled = track.scrollLeft >= maxScroll() - 1;
     };
     const go = (direction: number) =>
-      track.scrollBy({ left: direction * cardStep(), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      track.scrollBy({
+        left: direction * cardStep(),
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      });
 
     prev.addEventListener("click", () => go(-1));
     next.addEventListener("click", () => go(1));

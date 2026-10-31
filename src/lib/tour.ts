@@ -12,9 +12,16 @@ export interface TourSlide {
 }
 
 export const TOUR_HEADING = {
-  title: "How it works",
-  subline: "From your first message to practice between lessons.",
+  title: "How it works", // eyebrow
+  subline: "From your first message to practice between lessons", // h2
 } as const;
+
+// The three facts from the dropped "What lessons look like" block (redesign spec).
+export const TOUR_FACTS = [
+  "One-to-one on a video call",
+  "Your own course in Moodle",
+  "Practice app between lessons",
+] as const;
 
 export const TOUR_LABELS = {
   previous: "Previous slide",
