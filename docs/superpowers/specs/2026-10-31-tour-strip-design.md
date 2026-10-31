@@ -39,7 +39,7 @@ The section is placed between `Hero` and `InterimBlock` in `src/pages/index.astr
 | 1 | Book a trial lesson | Tell Tetiana about yourself, your level and your goals. | This page's trial form window, captured |
 | 2 | Your course space | Lesson materials and homework in Moodle. | Moodle *Lesson 1. Activation*, listening exercise, phone width, **supplied by the owner** |
 | 3 | Practise new words | Flashcards in the EnglishPusher app, between lessons. | `app.englishpusher.in.ua/b1-flashcards/`, captured |
-| 4 | English for work | C1 Business vocabulary: meetings, emails, presentations. | `app.englishpusher.in.ua` C1 Business, captured |
+| 4 | English for work | C1 vocabulary for work: leadership, innovation and business writing. | `app.englishpusher.in.ua/c1-flashcards/?topic=ceo-communication`, captured |
 | 5 | Check your grammar | Short grammar tests, topic by topic. | `grammar.englishpusher.in.ua`, captured |
 
 - **Phone (< 640 px):** one card is about 80% of the width, the next card peeks in, and visitors
