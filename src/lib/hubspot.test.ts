@@ -138,11 +138,38 @@ test("no answer within 15 s is timeout, and the request is aborted", async (t) =
   assert.equal(calls[0].init.signal?.aborted, true);
 });
 
+test("an answer arriving just before the 15 s cut-off is used, not a timeout (AC-05)", async (t) => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  let answer: (res: Response) => void = () => {};
+  const { fetchImpl } = fakeFetch(() => new Promise<Response>((resolve) => (answer = resolve)));
+  let settled: SubmitResult | undefined;
+  const pending = send(fetchImpl).then((r) => (settled = r));
+  await Promise.resolve();
+  t.mock.timers.tick(14_999);
+  answer(new Response(null, { status: 200 }));
+  await pending;
+  assert.deepEqual(settled, { ok: true });
+  t.mock.timers.tick(1); // the cut-off moment passes after the answer: nothing changes
+  await Promise.resolve();
+  assert.deepEqual(settled, { ok: true });
+});
+
 test("an answer arriving after the cut-off is ignored", async () => {
   const { fetchImpl } = fakeFetch(
     () => new Promise<Response>((resolve) => setTimeout(() => resolve(new Response(null, { status: 200 })), 40)),
   );
   assert.deepEqual(await send(fetchImpl, { timeoutMs: 10 }), { ok: false, kind: "timeout" });
+});
+
+test("the answer body never changes a success: a known contact is the same ok (AC-09)", async () => {
+  const known = JSON.stringify({
+    inlineMessage: "Thanks for submitting the form.",
+    errors: [{ message: "Contact already exists", errorType: "CONTACT_EXISTS" }],
+  });
+  for (const body of [null, "", known, "not json"]) {
+    const { fetchImpl } = fakeFetch(async () => new Response(body, { status: 200 }));
+    assert.deepEqual(await send(fetchImpl), { ok: true }, String(body));
+  }
 });
 
 test("the body carries the entry address as pageUri, and hutk only when given", async () => {

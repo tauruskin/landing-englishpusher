@@ -9,8 +9,8 @@ files_hint: ["src/lib/hubspot.test.ts"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 # T12 — Pin two hubspot.ts edge cases: an answer just before the 15 s cut-off and an answer body that never changes the result
@@ -31,9 +31,9 @@ The code is correct today; two test-plan cases have no assertion, so a regressio
 
 ## Checklist
 
-- [ ] A 2xx answer that arrives at 14,999 ms under mock timers returns `{ ok: true }` (and the timer then firing changes nothing).
-- [ ] A 2xx answer whose JSON body says the contact already exists returns `{ ok: true }`, same as an empty 2xx.
+- [x] A 2xx answer that arrives at 14,999 ms under mock timers returns `{ ok: true }` (and the timer then firing changes nothing).
+- [x] A 2xx answer whose JSON body says the contact already exists returns `{ ok: true }`, same as an empty 2xx.
 
 ## Definition of Done
 
-- [ ] Both tests in `src/lib/hubspot.test.ts`; `npm test` green; no production change needed (if one is, the test found a bug — report it).
+- [x] Both tests in `src/lib/hubspot.test.ts`; `npm test` green; no production change needed (if one is, the test found a bug — report it).

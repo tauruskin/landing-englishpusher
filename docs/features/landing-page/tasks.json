@@ -242,7 +242,7 @@
         "src/lib/hubspot.test.ts"
       ],
       "file": "docs/features/landing-page/tasks/t12-hubspot-edge-tests.md",
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "T13",
