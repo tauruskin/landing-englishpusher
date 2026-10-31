@@ -72,3 +72,12 @@ answers.
 - Spec: [[../spec.md]] US-02, AC-03, AC-04, §6 (page speed, accessibility)
 - SAD: [[../sad.md]] §4 (choice 2), §5, §8 (Accessibility)
 - Related ADR: repo [[../../../adr/0001-astro-static-site-with-react-island]]
+
+## Note (2026-10-31): third Book link from the goal picker
+
+The redesign adds a third plain `#trial-lesson` Book link, in the goal picker's floating bar. The
+picker hands the chosen goals to `TrialDialog` through a `trial:goals` window event, with
+`window.__pendingTrialGoals` as a fallback for clicks before hydration. `TrialDialog` merges them
+with `mergeGoals` (`src/lib/goals.ts`). The decision still holds: every Book link is a plain
+`#trial-lesson` link, and no element carries `id="trial-lesson"`. See
+[the redesign spec](../../../superpowers/specs/2026-10-31-landing-redesign-design.md).
