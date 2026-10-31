@@ -8,16 +8,16 @@
 
 | # | Task | Layer | Owner | Estimate | Blocked by | Status | Step |
 |---|---|---|---|---|---|---|---|
-| T1 | site.ts: live host, isPublished, form IDs, INTERIM_COPY | domain | Oleksandr Pushkar (Operator) | S | — | todo | — |
-| T2 | Copy validate.ts + options.ts, pin parity, add LinkedIn | domain | Oleksandr Pushkar (Operator) | S | — | todo | — |
+| T1 | site.ts: live host, isPublished, form IDs, INTERIM_COPY | domain | Oleksandr Pushkar (Operator) | S | — | blocked | SELECT — Test form ID not created yet (spec §8) |
+| T2 | Copy validate.ts + options.ts, pin parity, add LinkedIn | domain | Oleksandr Pushkar (Operator) | S | — | done | COMMIT |
 | T3 | Copy hubspot.ts: entry address, 15 s cut-off, failure kind | domain | Oleksandr Pushkar (Operator) | M | — | todo | — |
 | T4 | events.ts: three dataLayer payloads | domain | Oleksandr Pushkar (Operator) | S | — | todo | — |
-| T5 | seo.ts: robots meta, robots.txt, sitemap.xml | domain | Oleksandr Pushkar (Operator) | S | T1 | todo | — |
-| T6 | BaseLayout head + robots/sitemap routes | wiring | Oleksandr Pushkar (Operator) | M | T1, T5 | todo | — |
-| T7 | Static sections + index.astro with Interim copy | ui | Oleksandr Pushkar (Operator) | S | T2, T6 | todo | — |
-| T8 | TrialForm: fields, validation, trap field, sending | ui | Oleksandr Pushkar (Operator) | M | T1, T2, T3 | todo | — |
-| T9 | TrialForm: thank-you, failure banner, events | ui | Oleksandr Pushkar (Operator) | M | T4, T8 | todo | — |
-| T10 | TrialDialog + client:idle mount | ui | Oleksandr Pushkar (Operator) | M | T4, T7, T9 | todo | — |
-| T11 | Release checklist | docs | Oleksandr Pushkar (Operator) | S | T6, T10 | todo | — |
+| T5 | seo.ts: robots meta, robots.txt, sitemap.xml | domain | Oleksandr Pushkar (Operator) | S | T1 | blocked | dep T1 blocked |
+| T6 | BaseLayout head + robots/sitemap routes | wiring | Oleksandr Pushkar (Operator) | M | T1, T5 | blocked | dep T1 blocked |
+| T7 | Static sections + index.astro with Interim copy | ui | Oleksandr Pushkar (Operator) | S | T2, T6 | blocked | dep T1 blocked |
+| T8 | TrialForm: fields, validation, trap field, sending | ui | Oleksandr Pushkar (Operator) | M | T1, T2, T3 | blocked | dep T1 blocked |
+| T9 | TrialForm: thank-you, failure banner, events | ui | Oleksandr Pushkar (Operator) | M | T4, T8 | blocked | dep T1 blocked |
+| T10 | TrialDialog + client:idle mount | ui | Oleksandr Pushkar (Operator) | M | T4, T7, T9 | blocked | dep T1 blocked |
+| T11 | Release checklist | docs | Oleksandr Pushkar (Operator) | S | T6, T10 | blocked | dep T1 blocked |
 
 **Total:** 11 tasks, ~5 person-days (S ≈ 0.25 d, M ≈ 0.5–0.75 d).

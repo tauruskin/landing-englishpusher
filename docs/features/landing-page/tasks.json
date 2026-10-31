@@ -16,7 +16,7 @@
         "src/lib/site.test.ts"
       ],
       "file": "docs/features/landing-page/tasks/t01-site-settings.md",
-      "status": "todo"
+      "status": "blocked"
     },
     {
       "id": "T2",
@@ -34,7 +34,7 @@
         "src/lib/options.test.ts"
       ],
       "file": "docs/features/landing-page/tasks/t02-validate-and-options.md",
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "T3",
@@ -86,7 +86,7 @@
         "src/lib/seo.test.ts"
       ],
       "file": "docs/features/landing-page/tasks/t05-seo-bodies.md",
-      "status": "todo"
+      "status": "blocked"
     },
     {
       "id": "T6",
@@ -110,7 +110,7 @@
         "public/og-image.png"
       ],
       "file": "docs/features/landing-page/tasks/t06-layout-head.md",
-      "status": "todo"
+      "status": "blocked"
     },
     {
       "id": "T7",
@@ -132,7 +132,7 @@
         "src/components/BookTrialLink.astro"
       ],
       "file": "docs/features/landing-page/tasks/t07-static-sections.md",
-      "status": "todo"
+      "status": "blocked"
     },
     {
       "id": "T8",
@@ -156,7 +156,7 @@
         "package-lock.json"
       ],
       "file": "docs/features/landing-page/tasks/t08-trial-form-fields.md",
-      "status": "todo"
+      "status": "blocked"
     },
     {
       "id": "T9",
@@ -178,7 +178,7 @@
         "public/teacher-celebrate.png"
       ],
       "file": "docs/features/landing-page/tasks/t09-trial-form-results.md",
-      "status": "todo"
+      "status": "blocked"
     },
     {
       "id": "T10",
@@ -203,7 +203,7 @@
         "docs/architecture-map.md"
       ],
       "file": "docs/features/landing-page/tasks/t10-trial-dialog.md",
-      "status": "todo"
+      "status": "blocked"
     },
     {
       "id": "T11",
@@ -224,7 +224,7 @@
         "docs/features/landing-page/release-checklist.md"
       ],
       "file": "docs/features/landing-page/tasks/t11-release-checklist.md",
-      "status": "todo"
+      "status": "blocked"
     }
   ]
 }

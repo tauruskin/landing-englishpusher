@@ -9,8 +9,8 @@ files_hint: ["src/pages/index.astro", "src/components/Hero.astro", "src/componen
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "M"
-status: "todo"
-step: ""
+status: "blocked"
+step: "dep T1 blocked"
 ---
 
 <!-- The governing rule of this file: **inline the slice the task actually needs, name where it came

@@ -9,8 +9,8 @@ files_hint: ["src/lib/seo.ts", "src/lib/seo.test.ts"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: ""
+status: "blocked"
+step: "dep T1 blocked"
 ---
 
 <!-- The governing rule of this file: **inline the slice the task actually needs, name where it came
