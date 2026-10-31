@@ -18,6 +18,6 @@
 | T8 | TrialForm: fields, validation, trap field, sending | ui | Oleksandr Pushkar (Operator) | M | T1, T2, T3 | done | COMMIT |
 | T9 | TrialForm: thank-you, failure banner, events | ui | Oleksandr Pushkar (Operator) | M | T4, T8 | done | COMMIT |
 | T10 | TrialDialog + client:idle mount | ui | Oleksandr Pushkar (Operator) | M | T4, T7, T9 | done | COMMIT |
-| T11 | Release checklist | docs | Oleksandr Pushkar (Operator) | S | T6, T10 | todo | — |
+| T11 | Release checklist | docs | Oleksandr Pushkar (Operator) | S | T6, T10 | done | COMMIT |
 
 **Total:** 11 tasks, ~5 person-days (S ≈ 0.25 d, M ≈ 0.5–0.75 d).
