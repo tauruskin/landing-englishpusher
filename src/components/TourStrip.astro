@@ -90,8 +90,7 @@ const arrowClass = [
   if (root && track && nav && prev && next) {
     const cards = Array.from(track.children) as HTMLElement[];
     const dots = Array.from(root.querySelectorAll<HTMLElement>("[data-dot]"));
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const cardStep = () => cards[0].offsetWidth + parseFloat(getComputedStyle(track).columnGap || "0");
+    const cardStep = () => cards[0].offsetWidth + parseFloat(getComputedStyle(track).columnGap) || 0;
     const maxScroll = () => track.scrollWidth - track.clientWidth;
 
     const update = () => {
@@ -108,7 +107,7 @@ const arrowClass = [
       next.disabled = track.scrollLeft >= maxScroll() - 1;
     };
     const go = (direction: number) =>
-      track.scrollBy({ left: direction * cardStep(), behavior: reduceMotion ? "auto" : "smooth" });
+      track.scrollBy({ left: direction * cardStep(), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 
     prev.addEventListener("click", () => go(-1));
     next.addEventListener("click", () => go(1));
