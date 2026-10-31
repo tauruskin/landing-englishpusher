@@ -37,6 +37,19 @@ const caught: [string, string, string?][] = [
   ["a module let", "<p>{PROMO}</p>", 'let PROMO = "Free lesson";'],
   ["a module constant with a ternary", "<p>{PROMO}</p>", 'const PROMO = Math.random() > 1 ? "Free lesson" : "";'],
   ["a field of a module object constant", "<p>{T.promo}</p>", 'const T = { promo: "Free lesson" };'],
+  [
+    "what a local arrow helper returns",
+    "<button>{submitLabel(on)}</button>",
+    'const submitLabel = (sending: boolean) => (sending ? "Sending…" : COPY.submit);',
+  ],
+  [
+    "what a local function declaration returns",
+    "<button>{submitLabel(on)}</button>",
+    `function submitLabel(sending: boolean) {
+      if (sending) return "Sending…";
+      return COPY.submit;
+    }`,
+  ],
 ];
 
 // A constant declared inside the component, before it returns its JSX.
@@ -81,6 +94,19 @@ const ignored: [string, string, string?][] = [
   ["entity-only text", "<span>&nbsp;</span><b>&times;</b>"],
   ["a local class constant", "<p className={cls}>{COPY.line}</p>", 'const cls = on ? "text-brand" : "text-neutral-600";'],
   ["a local copy alias", "<p>{line}</p>", "const line = COPY.line;"],
+  [
+    "a class helper used only in className",
+    "<b className={pillClass(on)}>{COPY.line}</b>",
+    'const pillClass = (active: boolean) => (active ? "border-brand bg-brand" : "border-neutral-200");',
+  ],
+  [
+    "a helper that calls itself (the cycle guard ends the walk)",
+    "<p>{depth(3)}</p>",
+    `function depth(n: number): string {
+      return n > 0 ? depth(n - 1) : COPY.line;
+    }`,
+  ],
+  ["constants that refer to each other", "<p>{a}</p>", "const a = b; const b = a;"],
 ];
 
 for (const [name, jsx, before] of ignored) {

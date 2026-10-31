@@ -376,7 +376,7 @@
         "src/lib/jsxText.test.ts"
       ],
       "file": "docs/features/landing-page/tasks/t19-jsx-guard-helpers.md",
-      "status": "todo"
+      "status": "done"
     }
   ]
 }

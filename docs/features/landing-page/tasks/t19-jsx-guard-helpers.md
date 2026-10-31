@@ -9,8 +9,8 @@ files_hint: ["src/lib/jsxText.ts", "src/lib/jsxText.test.ts"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 # T19 — Follow calls to local helper functions in the jsxText guard
@@ -25,10 +25,10 @@ see it either.
 
 ## Checklist
 
-- [ ] A rendered call to a local arrow / function-expression helper checks what it returns.
-- [ ] A rendered call to a local `function` declaration does the same.
-- [ ] A `pillClass`-style helper used only in `className` stays ignored.
+- [x] A rendered call to a local arrow / function-expression helper checks what it returns.
+- [x] A rendered call to a local `function` declaration does the same.
+- [x] A `pillClass`-style helper used only in `className` stays ignored.
 
 ## Definition of Done
 
-- [ ] `npm test` + `tsc` green; both components pass.
+- [x] `npm test` + `tsc` green; both components pass.
