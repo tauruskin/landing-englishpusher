@@ -309,6 +309,250 @@ read (AC-13; §11 tracks the check that this holds).
 **Critical flow 2: async event propagation** — N/A: the only async step is the Leads Bot's polling,
 which lives outside this repo and is unchanged (AC-06).
 
+**Runtime flows by user story** (`sequences` stage). Participants are generic roles: *user* (the
+Prospective student), *ui* (the page and its trial form window), *service* (the in-page send logic
+in `src/lib/`), and *external-system* (static hosting, the CRM, analytics, the lead bot, a
+crawler). There is no *data-store*: nothing is persisted, so no flow carries a persist step.
+Screen ids follow [ux-flows.md](ux-flows.md).
+
+### F1. Open the page
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as user (Prospective student)
+    participant Host as external-system (static hosting)
+    participant UI as ui (Landing page)
+    participant An as external-system (analytics)
+
+    Note over User,UI: Precondition: the page is built, opened on the published host or anywhere else
+    User->>Host: Opens the page address from a post, a shared link or a link preview
+    alt Address without the secure prefix
+        Host-->>User: Sends the visitor on to the secure address
+        User->>Host: Opens the secure address
+    end
+    Host-->>UI: Delivers the pre-built page to the browser
+    UI->>UI: Records the entry address with campaign tags and any trial-lesson hash, before anything changes it
+    UI->>UI: Checks whether the host is exactly the published host
+    alt Published host
+        UI->>An: Loads the tag manager
+    else Any other host
+        Note over UI,An: Tag manager never loaded, nothing is tracked
+    end
+    UI-->>User: Shows SCR-01 with Interim copy and two Book a trial lesson links
+    Note over User,UI: Every text shown is Interim copy approved by Tetiana, no price, free, length or result
+    opt Address ends in the trial-lesson hash
+        UI-->>User: Opens the trial form window once, straight away (F3)
+    end
+    Note over User,UI: Postcondition: entry address held in page memory for the send (F4), analytics on only on the published host
+```
+
+### F2. Search engines and link previews read the page
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Cr as client (search engine or link-preview crawler)
+    participant Host as external-system (static hosting)
+
+    Note over Cr,Host: Precondition: the page is published with the interim-copy setting on, fixed at build time
+    Cr->>Host: Requests the crawling rules
+    Host-->>Cr: Crawling allowed, with a pointer to the list of pages
+    Cr->>Host: Requests the list of pages offered for search
+    Host-->>Cr: An empty list while the copy is interim
+    Cr->>Host: Requests the page
+    Host-->>Cr: Page with a do-not-index tag, the title, a neutral description and the brand image
+    alt Search engine
+        Cr->>Cr: Crawls the page but leaves it out of results
+    else Link-preview crawler in a messenger or social network
+        Cr->>Cr: Builds the preview from the title, the neutral description and the brand image
+    end
+    Note over Cr,Host: Postcondition: never in search results while interim, one setting lifts both rules in the release with real copy
+```
+
+### F3. Open, close and reopen the trial form window
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as user (Prospective student)
+    participant UI as ui (trial form window)
+    participant An as external-system (analytics)
+
+    Note over User,UI: Precondition: SCR-01 is shown (F1) and the window is closed
+    alt Presses a Book a trial lesson link
+        User->>UI: Presses the link, which points to the trial-lesson hash
+    else Arrived with the trial-lesson hash
+        Note over User,UI: The page load in F1 asks to open the window once
+    end
+    opt Window code not ready yet
+        UI->>UI: Remembers the request and opens as soon as the code is ready
+    end
+    UI-->>User: Opens SCR-02 over the page with any answers typed earlier, focus moves inside
+    UI->>An: trial_form_open, once for this opening
+    Note over User,UI: Tab stays inside the window while it is open
+    User->>UI: Closes the window with the close button or Escape
+    UI->>UI: Removes the trial-lesson hash from the address, keeps typed answers in memory
+    UI-->>User: Back on SCR-01, focus returns to the link that opened the window
+    Note over User,UI: A link pressed before the code was ready returns focus to the first Book a trial lesson link
+    alt Scrolls, reads or reloads
+        UI-->>User: The window stays closed, a reload clears the typed answers
+    else Presses another Book a trial lesson link
+        UI-->>User: Opens SCR-02 again with the typed answers still there
+        UI->>An: trial_form_open, once for this opening
+    else Opens it again after a confirmed send (F4)
+        UI-->>User: Opens SCR-02 with an empty form
+        UI->>An: trial_form_open, once for this opening
+    end
+    Note over User,UI: Postcondition: answers live only in page memory, never saved in the browser
+```
+
+### F4. Send a trial lesson request
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as user (Prospective student)
+    participant UI as ui (trial form window)
+    participant Svc as service (in-page send logic)
+    participant CRM as external-system (CRM forms)
+    participant An as external-system (analytics)
+
+    Note over User,UI: Precondition: SCR-02 is open (F3) and the entry address is recorded (F1)
+    User->>UI: Fills in the form and presses Send
+    UI->>Svc: Checks name, email and the hidden trap field
+    alt Name empty or email not valid
+        Svc-->>UI: The problem fields and what is wrong with each
+        UI-->>User: Problem next to each field, cursor on the first, every answer kept, nothing sent or recorded
+    else Hidden trap field filled by a bot
+        Svc-->>UI: Treat as done and send nothing
+        UI-->>User: SCR-03 thank-you, nothing sent, nothing recorded
+    else Form valid
+        UI-->>User: Shows the sending state, no thank-you yet
+        Svc->>Svc: Builds the submission with the entry address and the visitor-tracking cookie when present
+        Svc->>Svc: Picks the live form on the published host, otherwise the Test form
+        Svc->>CRM: Sends the submission, cut off after 15 s
+        Note over Svc,CRM: The CRM records the request outside this system, only the live form feeds the lead pipeline (F6)
+        alt CRM confirms within 15 s
+            CRM-->>Svc: Confirmed
+            Svc-->>UI: Confirmed
+            UI-->>User: SCR-03 thank-you by first name, the same for an email the CRM already knows, form emptied
+            UI->>An: generate_lead with form_name trial_lesson
+        else CRM refuses, connection drops, or 15 s pass
+            Svc-->>UI: Failed, with the kind of failure
+            UI-->>User: Send-failed message (F5)
+        end
+    end
+    Note over User,CRM: Postcondition: a request counts only when the CRM confirms it, off the published host it reaches only the Test form
+```
+
+### F5. Sending fails, then try again
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as user (Prospective student)
+    participant UI as ui (trial form window)
+    participant Svc as service (in-page send logic)
+    participant CRM as external-system (CRM forms)
+    participant An as external-system (analytics)
+
+    Note over User,UI: Precondition: a valid form is being sent (F4) and SCR-02 shows the sending state
+    Svc->>CRM: Sends the submission
+    alt CRM refuses the submission
+        CRM-->>Svc: Refused
+        Svc->>Svc: Kind of failure is rejected
+    else Connection drops
+        Svc->>Svc: Kind of failure is network
+    else No answer within 15 s
+        Svc->>Svc: Cancels the send and ignores any later answer, kind of failure is timeout
+    end
+    Svc-->>UI: Failed, with the kind of failure
+    UI-->>User: SCR-04 says the request did not go through, offers Instagram and LinkedIn, every answer kept
+    UI->>An: trial_form_error with form_name and the kind of failure only, no generate_lead
+    alt Tries again
+        User->>UI: Presses try again
+        UI-->>User: SCR-02 with every answer kept, the send runs again from F4
+    else Writes to Tetiana
+        User->>UI: Follows the Instagram or LinkedIn link and leaves the page
+    else Closes the window
+        User->>UI: Closes the window
+        UI-->>User: Back on SCR-01, answers kept for the page lifetime
+    end
+    Note over User,An: Postcondition: no thank-you and no generate_lead, exactly one trial_form_error per failed attempt
+```
+
+### F6. A confirmed request reaches the lead pipeline (async, outside this repo)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CRM as external-system (CRM forms)
+    participant Bot as external-system (lead bot)
+    actor Team as user (Tetiana and the Operator)
+
+    Note over CRM,Bot: Trigger: the bot's schedule, every 5 min, existing behaviour, unchanged by this feature
+    Bot->>CRM: Asks for new live-form submissions since the last check
+    CRM-->>Bot: New Trial lesson requests, Landing leads among them
+    Bot->>Bot: Checks for an open deal for the same person (duplicate check, run first)
+    alt No open deal
+        Bot->>CRM: Creates a deal in the existing pipeline
+        Note over Bot,CRM: The CRM keeps the deal, outside this system
+        Bot->>Team: Lead card
+    else Open deal, last request more than 2 min ago
+        Bot->>Team: Submitted-again note
+    else Open deal, repeat within 2 min
+        Bot->>Bot: Stays silent
+    end
+    Note over CRM,Bot: Retry: a failed check is assumed to be covered by the next check 5 min later
+    alt The bot cannot process a request
+        Note over CRM,Team: Dead letter: the request stays in the CRM, visible to the Operator, caught by the end-to-end check
+    end
+    Note over CRM,Team: Postcondition: Landing leads handled exactly like app leads, the Test form is never read
+```
+
+**Coverage (spec §4 user stories and §5 acceptance criteria → flows):**
+
+| Story | Flows |
+|---|---|
+| US-01 Send a trial lesson request | F4 (failure path in F5) |
+| US-02 Reach one form from anywhere | F3 (deep-link start in F1) |
+| US-03 Keep answers when sending fails | F5 |
+| US-04 Handle landing requests as usual | F6 |
+| US-05 No unapproved promises | F1 (copy note) |
+| US-06 Recognise and count landing leads | F1 (entry address, analytics gate), F4 (submission contents, live or Test form) |
+| US-07 Own address, closed to search | F1 (secure redirect), F2 |
+
+| AC | Shown by |
+|---|---|
+| AC-01 | F4, branch "CRM confirms within 15 s" |
+| AC-02 | F4, branch "Name empty or email not valid" |
+| AC-03 | F3, open, close, reopen and after-send branches |
+| AC-04 | F1 opt "Address ends in the trial-lesson hash" + F3 (hash removed on close, no reopen) |
+| AC-05 | F5 |
+| AC-06 | F6 |
+| AC-07 | F1 (entry address recorded first) + F4 (sent with the submission, cookie when present) |
+| AC-08 | F4, trap-field branch and sending state; F5, no generate_lead |
+| AC-09 | F4, confirm branch (same thank-you for a known email) |
+| AC-10 | F1, copy note. N/A for the rest: Tetiana's approval of the copy is a check before publishing, not a runtime step |
+| AC-11 | F2 |
+| AC-12 | F1, branch "Address without the secure prefix" + F2, link-preview branch |
+| AC-13 | F1, analytics gate + F4, live or Test form choice |
+
+**Flagged by `sequences` (for design and the Operator, not decided here):**
+
+- F6 rests on two unverified assumptions about the Leads Bot: it reads only the live form, and a
+  failed check is picked up by the next one. Both are checked in the n8n workflow before
+  `/sdd:tasks landing-page` (spec §8, §11 High risk).
+- F5: after a timeout the CRM may still have received the request, so "try again" can create a
+  second submission. The Leads Bot's duplicate check (F6) absorbs it. No change needed, noted for
+  the end-to-end check.
+- The design block "Critical flow 2: async event propagation — N/A" above predates F6. It is left
+  unchanged (additive rule): F6 draws the external async step for coverage only, and nothing in
+  this repo is async.
+- No flow persists anything (no data-store), so no schema change and no index hints for
+  `data-model`. All participants are already declared in §3 and §5. No new ADR candidates.
+
 ## 7. Deployment view
 
 The page is a set of static files built by `.github/workflows/deploy.yml` on every push to `main`
