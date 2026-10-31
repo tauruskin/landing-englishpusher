@@ -49,3 +49,9 @@
   opacity: 1;
   transform: none;
 }
+@media print {
+  .js-reveal [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
