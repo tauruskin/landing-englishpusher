@@ -35,7 +35,7 @@ test("visible text, title and link-preview text make no promises (AC-10)", () =>
 });
 
 test("exactly three Book links point at #trial-lesson and nothing has that id (ADR-0002)", () => {
-  // hero, the goal picker's floating bar, the call-to-action panel (InterimBlock until Task 8)
+  // hero, the goal picker's floating bar, the call-to-action panel
   assert.equal([...html.matchAll(/<a\b[^>]*href="#trial-lesson"/g)].length, 3);
   assert.doesNotMatch(html, /id="trial-lesson"/);
 });

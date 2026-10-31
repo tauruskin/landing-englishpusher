@@ -1,0 +1,46 @@
+---
+// Meet Tetiana (redesign spec, Page 5): the celebrating mascot in an orange circle with a slowly
+// rotating ring of text (decorative), and a short factual paragraph in Tetiana's voice. Her own
+// words, numbers and a photo come later (roadmap step 3).
+import { MASCOTS, MEET } from "../lib/landingCopy.ts";
+import { INSTAGRAM_URL, LINKEDIN_URL } from "../lib/options.ts";
+
+const linkClass =
+  "font-medium text-stone-900 underline decoration-brand decoration-2 underline-offset-4 hover:text-stone-950 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand";
+---
+
+<section aria-labelledby="meet-heading" class="overflow-x-clip bg-white py-20 md:py-24">
+  <div class="mx-auto grid max-w-6xl items-center gap-14 px-6 md:grid-cols-[0.9fr_1.1fr]">
+    <div aria-hidden="true" class="relative mx-auto aspect-square w-80 md:w-full md:max-w-md" data-reveal>
+      <svg viewBox="0 0 200 200" class="absolute inset-0 h-full w-full animate-spin-slow text-stone-400 motion-reduce:animate-none">
+        <defs><path id="meet-ring" d="M100,100 m-88,0 a88,88 0 1,1 176,0 a88,88 0 1,1 -176,0" /></defs>
+        <text font-family="Space Grotesk, sans-serif" font-size="11" font-weight="600" letter-spacing="3.2" fill="currentColor">
+          <textPath href="#meet-ring">{MEET.ring}</textPath>
+        </text>
+      </svg>
+      <div class="absolute inset-[14%] rounded-full bg-brand/30"></div>
+      <img
+        src={MASCOTS.celebrate.src}
+        alt=""
+        width={MASCOTS.celebrate.width}
+        height={MASCOTS.celebrate.height}
+        loading="lazy"
+        decoding="async"
+        class="absolute inset-x-[12%] bottom-[10%] h-auto w-[76%]"
+      />
+    </div>
+    <div data-reveal>
+      <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-brand">{MEET.eyebrow}</p>
+      <h2 id="meet-heading" class="mt-2 font-display text-4xl font-bold tracking-tight md:text-5xl">{MEET.title}</h2>
+      <p class="mt-5 max-w-[52ch] text-lg leading-relaxed text-stone-600">{MEET.paragraph}</p>
+      <div class="mt-8 flex gap-6">
+        <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" class={linkClass}>
+          {MEET.instagram} <span aria-hidden="true">↗</span><span class="sr-only">(opens in a new tab)</span>
+        </a>
+        <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" class={linkClass}>
+          {MEET.linkedin} <span aria-hidden="true">↗</span><span class="sr-only">(opens in a new tab)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

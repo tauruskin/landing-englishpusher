@@ -1,0 +1,26 @@
+---
+// Call to action (redesign spec, Page 6): replaces InterimBlock. A large orange panel with a dark
+// Book button; the waving mascot peeks in on desktop.
+import BookTrialLink from "./BookTrialLink.astro";
+import { CTA, MASCOTS } from "../lib/landingCopy.ts";
+---
+
+<section aria-labelledby="cta-heading" class="bg-white px-4 pb-6 md:px-6">
+  <div class="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] bg-brand px-8 py-14 md:px-16 md:py-16" data-reveal>
+    <div aria-hidden="true" class="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-white/15"></div>
+    <img
+      src={MASCOTS.wave.src}
+      alt=""
+      width={MASCOTS.wave.width}
+      height={MASCOTS.wave.height}
+      loading="lazy"
+      decoding="async"
+      class="absolute -bottom-6 right-6 hidden h-auto w-64 rotate-[4deg] md:block"
+    />
+    <div class="relative max-w-xl">
+      <h2 id="cta-heading" class="font-display text-4xl font-bold tracking-tight text-stone-900 md:text-5xl">{CTA.title}</h2>
+      <p class="mt-4 text-lg text-stone-900">{CTA.line}</p>
+      <div class="mt-8"><BookTrialLink variant="dark" size="lg" /></div>
+    </div>
+  </div>
+</section>
