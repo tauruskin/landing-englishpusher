@@ -45,9 +45,11 @@ date (and timestamps where asked) when done.
 - [ ] **Tetiana** — approve every visible string in writing: the page (Hero, InterimBlock, Footer),
   the page title and description, the link preview (title, description, image), the form's
   headline and subline, the thank-you and the send-failed message. Check them against the banned
-  list: no price, no "free", no lesson length, no learning result. The wording lives in one `copy`
-  object at the top of each file in [`src/components/`](../../../src/components/) and in
-  [`src/pages/index.astro`](../../../src/pages/index.astro). Proves AC-10.
+  list: no price, no "free", no lesson length, no learning result. The page's wording comes from
+  `INTERIM_COPY` in [`src/lib/site.ts`](../../../src/lib/site.ts) and the section files in
+  [`src/components/`](../../../src/components/); every string of the form and its window
+  (including the screen-reader labels) is `FORM_COPY` in
+  [`src/lib/formCopy.ts`](../../../src/lib/formCopy.ts). Proves AC-10.
 - [ ] **Operator** — after any copy change: `npm run build && npm run test:built` passes (the
   automated AC-10 scan of the built page; CI runs it too). Proves AC-10.
 - [ ] **Operator** — local send: run `npm run build && npm run preview`, open
@@ -55,6 +57,34 @@ date (and timestamps where asked) when done.
   (e.g. "TEST Landing local"). Check: no `googletagmanager.com` request in the network panel; the
   submission appears **only** on the Test form in HubSpot; no deal and no Leads Bot card appear.
   Delete the test contact the same day. Proves AC-13.
+- [ ] **Operator** — **Local UI pass (preview, Test form).** Run `npm run build && npm run preview`
+  and open `http://localhost:4321/` with DevTools open. Watch the `dataLayer` with
+  `window.dataLayer` in the console (the array exists even though GTM is not loaded locally), and
+  watch requests in the network panel. Use a clearly marked test name ("TEST Landing UI") and
+  delete every test contact in HubSpot the same day. One box per check (the e2e-through-UI rows of
+  the [spec.md §7 test plan](spec.md)):
+  - [ ] **AC-02** — open the form from a Book link, type a level and a message, leave First name
+    empty and type `anna@` as the email, press Send. Both messages are shown ("Please enter your
+    name", "Please enter a valid email"), the cursor is on First name, no request goes to
+    `api.hsforms.com`, and the level and message are unchanged.
+  - [ ] **AC-03** — fill some fields, close with Escape, reopen from the **other** Book link. The
+    answers are still there, and `dataLayer` has one `trial_form_open` per opening. Reload the page
+    and open again: the form is empty.
+  - [ ] **AC-04** — open `http://localhost:4321/?utm_source=ui_check#trial-lesson` in a new tab. The
+    form opens straight away with one `trial_form_open`. Close it: the address bar keeps
+    `?utm_source=ui_check` but has no `#trial-lesson`, and scrolling or reloading does not reopen
+    the form.
+  - [ ] **AC-08** — set DevTools network throttling to "Slow 3G" and send a valid form. The Send
+    button shows that it is sending (spinner, disabled) until HubSpot answers; there is no thank-you
+    before that, and no `generate_lead`.
+  - [ ] **AC-08** — trap field: in the Elements panel, type any text into the hidden `company_url`
+    input, then send a valid form. A thank-you is shown, but no request goes to `api.hsforms.com`
+    and nothing is added to `dataLayer`.
+  - [ ] **AC-01** — send a valid form with first name "TEST Anna". The thank-you reads "Thank you,
+    TEST Anna!", and `dataLayer` gets exactly one `generate_lead` with `form_name: "trial_lesson"`,
+    after HubSpot's answer. The submission is on the Test form.
+  - [ ] **AC-09** — send again with the **same** email (now known to HubSpot), then once with a new
+    email. Both show the identical thank-you; nothing hints that the email was already known.
 - [ ] **Operator** — local failure: with the network switched off in DevTools, send again. The
   banner shows the Instagram and LinkedIn links, every answer is kept, and `dataLayer` gets one
   `trial_form_error` with `error_kind: "network"` and no `generate_lead`. Proves AC-05 and AC-08.

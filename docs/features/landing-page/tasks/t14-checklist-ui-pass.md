@@ -9,8 +9,8 @@ files_hint: ["docs/features/landing-page/release-checklist.md"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 # T14 — Add the Local UI pass to the release checklist: one checkbox per e2e-through-UI row of AC-01..04, 08, 09
@@ -27,9 +27,9 @@ The checklist covers AC-13 local send, AC-05/AC-08 offline failure and AC-03 foc
 
 ## Checklist
 
-- [ ] Add a "Local UI pass (preview, Test form)" block to §2 with one checkbox per row, each naming its AC, the owner, and the observable expected result.
-- [ ] Point the AC-10 copy approval at `src/lib/formCopy.ts` (T13).
+- [x] Add a "Local UI pass (preview, Test form)" block to §2 with one checkbox per row, each naming its AC, the owner, and the observable expected result.
+- [x] Point the AC-10 copy approval at `src/lib/formCopy.ts` (T13).
 
 ## Definition of Done
 
-- [ ] Each of AC-01, AC-02, AC-03, AC-04, AC-08, AC-09 appears in the new block; markdown links resolve.
+- [x] Each of AC-01, AC-02, AC-03, AC-04, AC-08, AC-09 appears in the new block; markdown links resolve.
