@@ -34,3 +34,18 @@ test("extended VP8X: canvas width-1 and height-1 as 24-bit little-endian at byte
 test("a file that is not WebP is rejected", () => {
   assert.throws(() => webpSize(new TextEncoder().encode("\x89PNG\r\n\x1a\n0000000000000000000000")), /not a WebP/);
 });
+
+test("an unknown chunk is rejected", () => {
+  assert.throws(() => webpSize(webp("ABCD", [])), /unknown WebP chunk/);
+});
+
+test("truncated input is rejected", () => {
+  assert.throws(() => webpSize(new Uint8Array(10)), /not a WebP/);
+});
+
+test("extended VP8X: the third byte of the 24-bit fields is read (sizes above 65535)", () => {
+  const w = 70000 - 1;
+  const h = 80000 - 1;
+  const body = [0, 0, 0, 0, 0, 0, 0, 0, w & 0xff, (w >> 8) & 0xff, w >> 16, h & 0xff, (h >> 8) & 0xff, h >> 16];
+  assert.deepEqual(webpSize(webp("VP8X", body)), { width: 70000, height: 80000 });
+});
