@@ -9,8 +9,8 @@ files_hint: ["src/layouts/BaseLayout.astro", "src/pages/robots.txt.ts", "src/pag
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "M"
 context_budget: "M"
-status: "blocked"
-step: "dep T1 blocked"
+status: "todo"
+step: "—"
 ---
 
 <!-- The governing rule of this file: **inline the slice the task actually needs, name where it came

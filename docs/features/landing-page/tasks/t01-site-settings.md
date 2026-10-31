@@ -9,8 +9,8 @@ files_hint: ["src/lib/site.ts", "src/lib/site.test.ts"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "M"
-status: "blocked"
-step: "SELECT — Test form ID not created yet (spec §8)"
+status: "done"
+step: "COMMIT"
 ---
 
 <!-- The governing rule of this file: **inline the slice the task actually needs, name where it came

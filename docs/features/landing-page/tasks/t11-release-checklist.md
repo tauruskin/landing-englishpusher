@@ -9,8 +9,8 @@ files_hint: ["docs/features/landing-page/release-checklist.md"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "M"
-status: "blocked"
-step: "dep T1 blocked"
+status: "todo"
+step: "—"
 ---
 
 <!-- The governing rule of this file: **inline the slice the task actually needs, name where it came
