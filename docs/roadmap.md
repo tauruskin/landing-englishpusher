@@ -20,9 +20,9 @@ Strangers who arrive from Tetiana's social posts, Google or a shared link reach 
 | # | Step | Source | Size | Status |
 |---|---|---|:---:|---|
 | 1 | Project skeleton (`scaffold`): Astro 7 + React island + Tailwind 4, BaseLayout with GTM, tests and type check, GitHub Pages deploy on the default URL | [architecture-map.md §C4 — target foundation](architecture-map.md) | S | idea |
-| 2 | Trial form on the page: a visitor sends a trial request from the page into the HubSpot form "Trial lesson request" (with `hubspotutk` and page URL), and `trial_form_open` / `generate_lead` reach GTM | [idea-brief.md §5. Out of scope](idea-brief.md) (constraint to preserve) | S | building → [landing-page](features/landing-page/spec.md) |
+| 2 | Trial form on the page: a visitor sends a trial request from the page into the HubSpot form "Trial lesson request" (with `hubspotutk` and page URL), and `trial_form_open` / `generate_lead` reach GTM | [idea-brief.md §5. Out of scope](idea-brief.md) (constraint to preserve) | S | shipped → [landing-page](features/landing-page/spec.md) |
 | 3 | Sales content that persuades strangers → see [Not yet specified](#not-yet-specified) | [idea-brief.md §7. Recommendation](idea-brief.md) | fog | idea |
-| 4 | Own address, ready for search: the page is served at its chosen address (CNAME + DNS), with canonical, Open Graph, sitemap and robots so Google can index it | [idea-brief.md §8. Open questions](idea-brief.md) (separate address) | S | building → [landing-page](features/landing-page/spec.md) |
+| 4 | Own address, ready for search: the page is served at its chosen address (CNAME + DNS), with canonical, Open Graph, sitemap and robots so Google can index it | [idea-brief.md §8. Open questions](idea-brief.md) (separate address) | S | shipped → [landing-page](features/landing-page/spec.md) |
 | 5 | Reports tell landing leads apart: the Monday report and Leads Bot cards show which leads came from the landing page and which came from the app | [idea-brief.md §7. Recommendation](idea-brief.md) ("attributed to the page in HubSpot") | S | idea |
 | 6 | Launch: Tetiana's Instagram/LinkedIn bio links and post links (with UTM tags) point to the page instead of the app | [idea-brief.md §3. Users](idea-brief.md) (how they arrive) | XS | idea |
 
@@ -85,4 +85,5 @@ Not waved yet: step 3 (fog) and step 6, which depends on it. Both get a wave onc
 
 | Step | Shipped | Link |
 |---|---|---|
-| — | — | — |
+| 2 · Trial form on the page | 2026-10-31 | [changelog](features/landing-page/changelog.md) · PR: pending · live after the [release checklist](features/landing-page/release-checklist.md) |
+| 4 · Own address, ready for search | 2026-10-31 | [changelog](features/landing-page/changelog.md) · PR: pending · live after the [release checklist](features/landing-page/release-checklist.md) |
