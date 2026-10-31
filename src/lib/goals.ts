@@ -9,3 +9,12 @@ export function mergeGoals(current: readonly string[], added: readonly string[])
   const chosen = new Set([...current, ...added]);
   return ORDER.filter((value) => chosen.has(value));
 }
+
+/**
+ * The form's goals after an opening that carries picked goals. An opening that resets the form
+ * (a send was confirmed since the last one) starts from nothing, so it holds exactly the picked
+ * goals; otherwise the picked goals are added to what is already ticked.
+ */
+export function goalsAfterOpening(current: readonly string[], picked: readonly string[], reset: boolean): string[] {
+  return mergeGoals(reset ? [] : current, picked);
+}

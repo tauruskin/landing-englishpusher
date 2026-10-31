@@ -27,7 +27,7 @@ const icons: Record<GoalValue, string> = {
 const tileBase = [
   "group relative rounded-[2rem] border-2 p-7 text-left transition duration-300",
   "hover:-translate-y-[3px] hover:shadow-[0_24px_40px_-20px_rgba(120,60,10,0.25)] active:scale-[0.98]",
-  "motion-reduce:transition-none focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
+  "motion-reduce:transition-none focus:outline-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand",
 ].join(" ");
 const tileSkin: Record<GoalValue, string> = {
   it_english: "border-transparent bg-stone-900 text-cream aria-pressed:ring-4 aria-pressed:ring-brand/50",
@@ -49,7 +49,7 @@ const tileSkin: Record<GoalValue, string> = {
       </div>
       <div aria-hidden="true" class="relative hidden h-32 w-32 shrink-0 md:block">
         <img data-mascot="thinking" src={MASCOTS.thinking.src} alt="" width={MASCOTS.thinking.width} height={MASCOTS.thinking.height} loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-contain" />
-        <img data-mascot="celebrate" hidden src={MASCOTS.celebrate.src} alt="" width={MASCOTS.celebrate.width} height={MASCOTS.celebrate.height} loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-contain" />
+        <img data-mascot="celebrate" hidden src={MASCOTS.celebrate.src} alt="" width={MASCOTS.celebrate.width} height={MASCOTS.celebrate.height} loading="eager" decoding="async" class="absolute inset-0 h-full w-full object-contain" />
       </div>
     </div>
 
@@ -77,12 +77,14 @@ const tileSkin: Record<GoalValue, string> = {
 
   <div
     data-goal-bar
-    class="invisible fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-2xl translate-y-[140%] items-center gap-4 rounded-full bg-stone-900 py-2.5 pl-6 pr-2.5 text-cream shadow-2xl transition duration-500 data-[open]:visible data-[open]:translate-y-0 motion-reduce:transition-none"
+    class="invisible fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-2xl translate-y-[140%] flex-col items-stretch gap-3 rounded-3xl bg-stone-900 p-4 text-cream sm:flex-row sm:items-center sm:gap-4 sm:rounded-full sm:py-2.5 sm:pl-6 sm:pr-2.5 shadow-2xl transition duration-500 data-[open]:visible data-[open]:translate-y-0 motion-reduce:transition-none"
   >
-    <p class="min-w-0 flex-1 truncate text-sm" aria-live="polite">
+    <p class="min-w-0 flex-1 line-clamp-2 text-sm sm:truncate">
       <span class="text-stone-400">{PICKER.chosenLabel}</span> <span data-goal-chosen class="font-semibold"></span>
     </p>
-    <BookTrialLink data-goal-book />
+    <div class="[&>a]:w-full [&>a]:justify-center sm:[&>a]:w-fit">
+      <BookTrialLink data-goal-book />
+    </div>
   </div>
 </section>
 
@@ -96,6 +98,8 @@ const tileSkin: Record<GoalValue, string> = {
   if (root && bar && chosenOut && book && thinking && celebrate) {
     const tiles = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-goal]"));
     const chosen = new Set<string>();
+    // The bar is shown while goals are chosen and the page footer is not in view.
+    let footerInView = false;
 
     const render = () => {
       for (const tile of tiles) tile.setAttribute("aria-pressed", String(chosen.has(tile.dataset.goal ?? "")));
@@ -103,10 +107,18 @@ const tileSkin: Record<GoalValue, string> = {
         .filter((tile) => chosen.has(tile.dataset.goal ?? ""))
         .map((tile) => tile.dataset.label)
         .join(" · ");
-      bar.toggleAttribute("data-open", chosen.size > 0);
+      bar.toggleAttribute("data-open", chosen.size > 0 && !footerInView);
       thinking.hidden = chosen.size > 0;
       celebrate.hidden = chosen.size === 0;
     };
+
+    const footer = document.querySelector("footer");
+    if (footer) {
+      new IntersectionObserver((entries) => {
+        footerInView = entries[entries.length - 1].isIntersecting;
+        render();
+      }).observe(footer);
+    }
 
     for (const tile of tiles) {
       tile.addEventListener("click", () => {

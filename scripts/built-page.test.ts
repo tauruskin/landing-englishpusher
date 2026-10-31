@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { findPromises } from "../src/lib/copyRules.ts";
 import { MARQUEE } from "../src/lib/landingCopy.ts";
-import { INSTAGRAM_URL, LINKEDIN_URL } from "../src/lib/options.ts";
+import { GOALS, INSTAGRAM_URL, LINKEDIN_URL } from "../src/lib/options.ts";
 
 const html = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
 
@@ -44,6 +44,13 @@ test("the goal picker has six unpressed goal buttons", () => {
   const tiles = [...html.matchAll(/<button\b[^>]*data-goal="[^"]+"[^>]*>/g)].map((m) => m[0]);
   assert.equal(tiles.length, 6);
   for (const tag of tiles) assert.match(tag, /aria-pressed="false"/);
+});
+
+test("every goal button carries a value the trial form accepts", () => {
+  const allowed: string[] = GOALS.map((goal) => goal.value);
+  const values = [...html.matchAll(/data-goal="([^"]+)"/g)].map((m) => m[1]);
+  assert.ok(values.length > 0);
+  for (const value of values) assert.ok(allowed.includes(value), value);
 });
 
 test("the footer links Tetiana's Instagram and LinkedIn in a new tab", () => {

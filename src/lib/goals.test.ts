@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mergeGoals } from "./goals.ts";
+import { goalsAfterOpening, mergeGoals } from "./goals.ts";
 
 test("adds the picked goals to an empty form", () => {
   assert.deepEqual(mergeGoals([], ["travel", "it_english"]), ["it_english", "travel"]);
@@ -25,4 +25,16 @@ test("returns goals in the form's GOALS order", () => {
 
 test("two empty lists give an empty list", () => {
   assert.deepEqual(mergeGoals([], []), []);
+});
+
+test("an opening that resets the form holds exactly the picked goals", () => {
+  assert.deepEqual(goalsAfterOpening(["speaking", "other"], ["travel", "it_english"], true), ["it_english", "travel"]);
+});
+
+test("a reset with nothing picked leaves no goals", () => {
+  assert.deepEqual(goalsAfterOpening(["speaking"], [], true), []);
+});
+
+test("an opening without a reset keeps the ticked goals and adds the picked ones", () => {
+  assert.deepEqual(goalsAfterOpening(["speaking"], ["travel"], false), ["speaking", "travel"]);
 });
