@@ -1,0 +1,78 @@
+---
+// "How it works" tour (spec docs/superpowers/specs/2026-10-31-tour-strip-design.md): a CSS
+// scroll-snap strip of phone-framed screenshots. Swiping and scrolling work with no JS. The
+// inline script below only adds the desktop arrows and the dots. All text comes from tour.ts.
+import { TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES, stepLabel } from "../lib/tour.ts";
+
+const arrowClass = [
+  "flex h-9 w-9 items-center justify-center rounded-full bg-white text-lg text-brand shadow-sm",
+  "transition-opacity hover:bg-cream disabled:cursor-default disabled:opacity-40",
+  "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand",
+].join(" ");
+---
+
+<section aria-labelledby="tour-heading" class="py-12" data-tour>
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h2 id="tour-heading" class="font-display text-2xl font-bold text-neutral-900 sm:text-3xl">
+        {TOUR_HEADING.title}
+      </h2>
+      <p class="mt-2 text-neutral-600">{TOUR_HEADING.subline}</p>
+    </div>
+    <div class="hidden gap-2 sm:flex" data-tour-nav hidden>
+      <button type="button" class={arrowClass} aria-label={TOUR_LABELS.previous} data-tour-prev>
+        <span aria-hidden="true">‹</span>
+      </button>
+      <button type="button" class={arrowClass} aria-label={TOUR_LABELS.next} data-tour-next>
+        <span aria-hidden="true">›</span>
+      </button>
+    </div>
+  </div>
+
+  <ol
+    tabindex="0"
+    aria-label={TOUR_HEADING.title}
+    data-tour-track
+    class={[
+      "mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 motion-reduce:scroll-auto",
+      "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      "rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand",
+    ].join(" ")}
+  >
+    {
+      TOUR_SLIDES.map((slide, i) => (
+        <li
+          aria-label={stepLabel(slide)}
+          class="shrink-0 basis-[80%] snap-start rounded-3xl bg-white p-4 shadow-sm sm:basis-[calc((100%-2rem)/3)]"
+        >
+          <div class="mx-auto w-40 overflow-hidden rounded-[1.75rem] border-[6px] border-neutral-900 bg-white sm:w-36">
+            <img
+              src={slide.image}
+              alt={slide.alt}
+              width={slide.width}
+              height={slide.height}
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding="async"
+              class="block h-auto w-full"
+            />
+          </div>
+          <p class="mt-4 font-display text-base font-semibold text-neutral-900">
+            <span class="text-brand">{slide.step}</span> · {slide.title}
+          </p>
+          <p class="mt-1 text-sm text-neutral-600">{slide.caption}</p>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div aria-hidden="true" class="mt-4 flex justify-center gap-1.5" data-tour-dots>
+    {
+      TOUR_SLIDES.map((_, i) => (
+        <span
+          data-dot
+          class={`h-1.5 rounded-full transition-all ${i === 0 ? "w-5 bg-brand" : "w-1.5 bg-neutral-300"}`}
+        />
+      ))
+    }
+  </div>
+</section>
