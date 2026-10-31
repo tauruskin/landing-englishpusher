@@ -268,3 +268,105 @@ those maps to an acceptance criterion below.
 - [ ] Does the trial form need a personal-data notice or consent line (for the app's form too)? Default now: none, as in the app. — owner: Operator with Tetiana, due: before launch (roadmap step 6)
 - [ ] What is the Test form's ID? Default now: the Operator creates it in HubSpot with the same fields as the live "Trial lesson request" form and records its ID in the repo's config (AC-13). — owner: Operator, due: before `/sdd:tasks landing-page`
 - [ ] What is Tetiana's LinkedIn address for the failure message (AC-05) and the footer? Default now: her own personal profile, confirmed by her. — owner: Operator with Tetiana, due: before `/sdd:tasks landing-page`
+
+## Test plan
+
+<!-- plan-tests (size S, route quick): inline plan. Every §5 AC maps to ≥1 test row; levels are generic. -->
+
+### AC coverage
+
+| AC (spec.md §5) | Test name (intent-based) | Level | How it runs | Expected outcome |
+|---|---|---|---|---|
+| AC-01 | a confirmed CRM answer is a successful send | unit | automated (T3) | any success answer from the CRM ends as "ok" |
+| AC-01 | generate_lead carries only the trial_lesson form name | unit | automated (T4) | the event has exactly the event name and `form_name: "trial_lesson"`, no other keys |
+| AC-01 | only a confirmed send shows the thank-you and records generate_lead | unit | automated (pure send-outcome helper in `src/lib/`) | "ok" gives thank-you + one generate_lead; every other outcome gives neither |
+| AC-01 | visitor sends a valid form and is thanked by name | e2e-through-UI | manual, preview on the Test form (T9, T11) | thank-you greets the visitor by first name, then exactly one generate_lead appears in the event log |
+| AC-02 | empty name and invalid email are reported with the app's messages | unit | automated (T2) | "enter your name" and "enter a valid email"; first problem field is the name when both fail |
+| AC-02 | invalid form is not sent and keeps the other answers | e2e-through-UI | manual, dev (T8) | both messages shown, cursor on First name, no request leaves the page, other answers unchanged |
+| AC-03 | each opening of the window records one trial_form_open | unit | automated (T10) | one event per opening; asking to open an already-open window records nothing |
+| AC-03 | a confirmed send resets the form for the next opening | unit | automated (T10) | after "ok", the next opening starts empty; after close without sending, answers remain |
+| AC-03 | answers survive closing and reopening from another button | e2e-through-UI | manual, preview (T10, T11) | answers kept across openings with one trial_form_open each; a reload clears them; focus enters the window, Tab stays inside, Escape closes, focus returns to the opener |
+| AC-04 | an address ending in #trial-lesson opens the form on load | unit | automated (T10) | with the hash → open once; without it → stay closed |
+| AC-04 | closing the window removes #trial-lesson and keeps the rest of the address | unit | automated (T10) | the address loses only the hash; path and campaign tags stay |
+| AC-04 | a shared #trial-lesson link opens the form once and never again by itself | e2e-through-UI | manual, preview (T10, T11) | form opens straight away with one trial_form_open; after close the hash is gone and scrolling or reloading does not reopen it |
+| AC-05 | a refused send is reported as rejected | unit | automated (T3) | a non-success CRM answer ends as "rejected" |
+| AC-05 | a dropped connection is reported as network | unit | automated (T3) | a send that throws ends as "network" |
+| AC-05 | no answer within 15 seconds is a timeout and a late answer is ignored | unit | automated (T3) | the send is cancelled at 15 s and ends as "timeout"; an answer arriving after that changes nothing |
+| AC-05 | trial_form_error names only the kind of failure | unit | automated (T4) | the event carries the event name, the form name and the failure kind (rejected, network or timeout), and no personal data |
+| AC-05 | a failed send shows the fallback and records one error per attempt | unit | automated (pure send-outcome helper in `src/lib/`) | each failure gives the fallback message + one trial_form_error and no generate_lead; a send stopped by the form's own checks records nothing |
+| AC-05 | an offline send keeps every answer and offers Instagram and LinkedIn | e2e-through-UI | manual, dev or preview with the network off (T9, T11) | fallback message with both links, every answer kept, one trial_form_error with kind "network", no generate_lead; trying again records one more error |
+| AC-06 | a published-page send reaches the Leads Bot like an app send | e2e | manual, published page, marked test name (T11) | a new deal in the existing pipeline and a lead card within 10 min; a second send with the same email gives a "submitted again" note; contact and deal deleted the same day |
+| AC-06 | the published page sends to the same live CRM form and fields as the app | contract | automated (T1, T2) | on the live host the form ID is the live "Trial lesson request" form, and the field names and level/goal values match the app's copy |
+| AC-07 | the send carries the entry address, not the current one | unit | automated (T3) | the page address in the request is the address the visitor arrived at, with campaign tags, even after #trial-lesson was removed |
+| AC-07 | the send is valid with and without the visitor-tracking cookie | unit | automated (T3) | with the cookie it is included; without it the request is still well-formed and still carries the entry address |
+| AC-07 | the CRM shows the landing address on a published-page lead | e2e | manual, published page entered through a campaign-tagged #trial-lesson link (T11) | the request's page-address field in the CRM holds the full entry address with the campaign tag |
+| AC-08 | a filled trap field fakes success without sending | unit | automated (pure send-outcome helper in `src/lib/`) | thank-you shown, no request to the CRM, no event recorded |
+| AC-08 | a send in progress or a failed send never counts as a lead | unit | automated (pure send-outcome helper in `src/lib/`) | while sending and after any failure: no thank-you, no generate_lead |
+| AC-08 | a slow send shows the sending state, not the thank-you | e2e-through-UI | manual, dev with a throttled network (T8, T9) | the form shows that it is sending until the CRM answers; filling the hidden trap field shows a thank-you with no request and no event |
+| AC-09 | any success answer gives the same result whatever its content | unit | automated (T3) | the outcome is "ok" for every success answer; nothing in the answer body changes it, so no "known contact" branch exists |
+| AC-09 | a known email gets the same thank-you as a new one | e2e-through-UI | manual, preview on the Test form (T9, T11) | a send with an email already in the CRM and one with a new email show the identical thank-you |
+| AC-10 | the built page states no price, free lesson, length or learning result | unit | automated, over the built page (runs after the build step; T7) | visible text, page title, description and link-preview text contain no currency amount, "free", lesson length or outcome claim from the spec's banned list |
+| AC-10 | Tetiana approves every piece of Interim copy | e2e-through-UI | manual, release checklist before publishing (T11) | Tetiana has reviewed the page, the form, the thank-you, the failure message and the link preview, and approved them in writing |
+| AC-11 | one interim setting closes indexing and empties the page list | unit | automated (T5) | interim: "do not index" and an empty page list; not interim: "index" and one address; crawling rules always allow crawling and name the page list |
+| AC-11 | the built and published page asks not to be indexed | e2e | manual, after the build and after deploy (T6, T11) | the build and the live address serve the crawling rules, an empty page list, and the "do not index" request on the page |
+| AC-12 | the published address is secure and shares with a preview | e2e | manual, after deploy (T11) | the insecure address redirects to the secure one, the certificate is valid, and a link shared in a messenger shows the title, a neutral description and the brand image |
+| AC-13 | only the exact live host counts as published | unit | automated (T1) | true only for `landing.englishpusher.in.ua`; false for localhost, a `www.` or other subdomain, and any preview address |
+| AC-13 | everything but the published page sends to the Test form | unit | automated (T1) | the form choice is the live form only when published, otherwise the Test form |
+| AC-13 | a local preview loads no analytics and sends to the Test form | e2e | manual, local preview (T6, T8, T11) | no tag-manager request in the network log; the send appears only on the Test form in the CRM, with no deal and no Leads Bot card; the test contact is deleted the same day |
+
+### Edge cases / error paths
+
+Each error and authorization AC (AC-02, AC-05, AC-08, AC-09, AC-13) already has its own rows above.
+The cases below are the boundaries those rows must include:
+
+- Name made of spaces only → expected: treated as empty, "enter your name" (AC-02).
+- Email with no domain part or with spaces → expected: "enter a valid email" (AC-02).
+- Optional fields left empty → expected: the send goes ahead; empty optional fields do not block it (AC-01).
+- CRM answers just before the 15-second cut-off → expected: the answer is used, no timeout (AC-05).
+- CRM answers after the cut-off → expected: ignored; the visitor keeps the failure message and the event stays "timeout" (AC-05).
+- Double press of the send button → expected: one request and at most one generate_lead (AC-08).
+- Send pressed again after a failure → expected: a new attempt; a second failure records a second trial_form_error (AC-05).
+- Address with campaign tags and #trial-lesson → expected: closing removes only the hash, and the CRM still gets the full entry address (AC-04, AC-07).
+- Host with uppercase letters, a trailing dot, `www.` or a port → expected: never counts as published unless it is exactly the live host (AC-13).
+- Visitor-tracking cookie removed by an ad blocker → expected: the send still succeeds and carries the entry address (AC-07).
+- Failed send with a filled trap field → expected: impossible by design; the trap path never contacts the CRM (AC-08).
+
+### Test data
+
+- Seed strategy: small in-file fixtures per test — a valid answer set (first name, email, one level,
+  one goal), an invalid set (blank name, bad email), entry addresses with and without campaign tags
+  and `#trial-lesson`, and a list of host names for AC-13. Level and goal values come from the
+  copied `options.ts`, never retyped.
+- Integration dependency: <!-- N/A: the page owns no datastore, cache or queue. --> The only
+  outside dependency is the CRM, and it is not mocked as a datastore. Unit tests replace only the
+  network call (a fake that answers success, refuses, throws, or never answers, with a controllable
+  clock for the 15-second cut-off). The real CRM is reached only by the manual e2e rows: the Test
+  form for local and preview sends, and the live form once on the published page.
+- Cleanup boundary: unit tests are per-test and stateless (fresh fixtures, the clock restored after
+  each). Manual e2e sends: every Test form contact, and the one marked live test contact and deal,
+  is deleted by the Operator the same day (AC-13), so the Monday report shows 0 test leads (§7).
+
+### NFR validation (load)
+
+<!-- N/A: no numeric load NFR. §6 has numbers, but none is a throughput or concurrency target for a load run: -->
+The page is static and the send goes straight from the browser to the CRM, so there is nothing in
+this repo to load. Each numeric §6 NFR is checked elsewhere:
+
+- Send feedback ≤ 15 s → the AC-05 timeout unit test.
+- Lead delivery ≤ 10 min → the AC-06 manual e2e (timestamps).
+- Page speed (largest content ≤ 2.5 s at p75, mobile score ≥ 90) and accessibility (score ≥ 95,
+  0 serious/critical issues, keyboard and screen-reader pass) → release checklist (T11) plus field
+  data after launch.
+- Lost sends ≤ 5% and availability ≥ 99.5% → monthly monitoring after launch (analytics events,
+  uptime check); not a pre-release test.
+- Field parity 100% → the AC-06 contract row (values pinned to the app's copy).
+
+### CI placement
+
+- On every PR (existing pipeline: tests, type check, build): all unit and contract rows. The AC-10
+  copy scan needs the built page, so it runs after the build step: either as its own command
+  outside the default test glob, or by building the page itself (implement picks).
+- Before each release (manual, from the release checklist, T11): every e2e-through-UI row on the
+  local preview with the Test form, then the AC-06, AC-07, AC-11, AC-12 e2e rows on the published
+  page, plus the page-speed and accessibility runs.
+- After launch (monitoring, not tests): lost sends and availability, read monthly.
