@@ -1,14 +1,33 @@
 ---
 // A plain link that opens the trial form window (ADR-0002): TrialDialog opens on #trial-lesson and,
-// once hydrated, intercepts clicks on these links. Looks like the app's button (brand pill +
-// CalendarCheck icon, inlined so no React is needed). No element may carry id="trial-lesson".
+// once hydrated, intercepts clicks on these links. No element may carry id="trial-lesson".
+// variant "brand" = dark text on orange (≈6.4:1); "dark" = cream on near-black.
+// data-goal-book marks the goal picker's floating-bar link (GoalPicker.astro).
+interface Props {
+  variant?: "brand" | "dark";
+  size?: "md" | "lg";
+  "data-goal-book"?: boolean;
+}
+const { variant = "brand", size = "md", ...rest } = Astro.props;
 const copy = { label: "Book a trial lesson" };
+const colours = {
+  brand: "bg-brand text-stone-900 shadow-[0_12px_24px_-12px_rgba(240,124,26,0.8)]",
+  dark: "bg-stone-900 text-cream",
+}[variant];
+const sizing = { md: "px-5 py-2.5 text-sm", lg: "px-6 py-3.5 text-base" }[size];
 ---
 
 <a
   href="#trial-lesson"
   data-trial-link
-  class="inline-flex w-fit items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+  {...rest}
+  class:list={[
+    "inline-flex w-fit shrink-0 items-center gap-2 rounded-full font-semibold transition",
+    "hover:-translate-y-0.5 active:scale-[0.98] motion-reduce:transition-none",
+    "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
+    colours,
+    sizing,
+  ]}
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"
