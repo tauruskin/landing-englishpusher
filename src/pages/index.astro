@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Hero from "../components/Hero.astro";
 import InterimBlock from "../components/InterimBlock.astro";
 import Footer from "../components/Footer.astro";
+import TrialDialog from "../components/trial-form/TrialDialog.tsx";
 
 // Interim copy (AC-10): neutral title and description, no "free", price, length or outcome.
 const copy = {
@@ -17,4 +18,5 @@ const copy = {
     <InterimBlock />
     <Footer />
   </main>
+  <TrialDialog client:idle />
 </BaseLayout>

@@ -78,7 +78,7 @@ Target layout; nothing exists yet.
 | Page | `src/pages/index.astro` | page | Astro file-based routing | The landing page, composed of sections |
 | Layout | `src/layouts/BaseLayout.astro` | layout | imported by every page | `<head>`: meta/SEO, fonts, GTM snippet, global CSS |
 | Sections | `src/components/` | ui (`.astro`) | imported by `index.astro` | Static page sections (hero, about, offer, testimonials, FAQ…), content decided in `specify` |
-| Trial form | `src/components/trial-form/` | ui (React island) | `<TrialForm client:visible />` in a section | Form UI and states, copied from the app |
+| Trial form | `src/components/trial-form/` | ui (React island) | `<TrialDialog client:idle />` in `index.astro`, opened by `#trial-lesson` links | Dialog shell + form UI and states, copied from the app |
 | Form logic | `src/lib/` | pure TS | imported by the trial form | `hubspot.ts`, `validate.ts`, `options.ts`, each with `*.test.ts` |
 | Styles | `src/styles/global.css` | tokens | imported by `BaseLayout.astro` | Tailwind 4 import + `@theme` brand tokens |
 | Static files | `public/` | assets | served as-is | Images, favicon (`CNAME` is written by the deploy workflow) |
@@ -86,7 +86,7 @@ Target layout; nothing exists yet.
 ## Conventions (the rules a new feature must match)
 
 - **Module wiring / registration:** pages are files under `src/pages/` (Astro routing); React
-  only where interactivity is needed, as an island with `client:visible`. Everything else is
+  only where interactivity is needed, as an island with `client:idle` ([ADR-0002](features/landing-page/adr/0002-open-trial-dialog-island-via-trial-lesson-hash-links.md)). Everything else is
   static `.astro` — [ADR-0001](adr/0001-astro-static-site-with-react-island.md).
 - **Error handling:** the form never loses typed answers. On a failed submit it shows a fallback
   message with a contact link and keeps the values. Precedent:
@@ -135,7 +135,7 @@ Target layout; nothing exists yet.
 
 - A new page section → `src/components/<Name>.astro`, added to `src/pages/index.astro`.
 - An interactive widget → a React component in `src/components/<name>/`, hydrated with
-  `client:visible`, with its logic in `src/lib/` and covered by `node --test`.
+  `client:idle` (ADR-0002), with its logic in `src/lib/` and covered by `node --test`.
 - The trial form → port of `app-englishpusher/src/shared/trialForm/` (`TrialForm.tsx`,
   `hubspot.ts`, `validate.ts`, `options.ts` and their tests).
 
