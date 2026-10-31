@@ -30,6 +30,8 @@ jobs:
 
       - run: npm run build
 
+      - run: npm run test:built
+
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,38 +1,70 @@
 ---
 import "../styles/global.css";
+import { ENTRY_HREF_KEY } from "../lib/hubspot.ts";
+import { INTERIM_COPY, LIVE_HOST } from "../lib/site.ts";
+import { robotsMeta } from "../lib/seo.ts";
 
 interface Props {
   title: string;
   description: string;
   lang?: string;
+  /** Site-relative path of the 1200×630 link-preview image. */
+  ogImage?: string;
 }
 
-const { title, description, lang = "uk" } = Astro.props;
+const { title, description, lang = "en", ogImage = "/og-image.png" } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = new URL(ogImage, Astro.site).href;
 
 // Google Tag Manager container: GA4, Clarity and the HubSpot tracking code
-// (which sets the hubspotutk cookie) live inside it.
+// (which sets the hubspotutk cookie) live inside it. Loaded only on the exact
+// live host (ADR-0001); everywhere else dataLayer is a plain array nothing reads.
+// No <noscript> iframe: it cannot check the host.
 const GTM_ID = "GTM-KJVX8GRG";
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
-    <script is:inline define:vars={{ GTM_ID }}>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != "dataLayer" ? "&l=" + l : "";
-        j.async = true;
-        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "dataLayer", GTM_ID);
+    <script is:inline define:vars={{ ENTRY_HREF_KEY }}>
+      // First in the head: record the arrival address before anything can change it (AC-07).
+      window[ENTRY_HREF_KEY] = location.href;
     </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="robots" content={robotsMeta(INTERIM_COPY)} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <script is:inline define:vars={{ GTM_ID, LIVE_HOST }}>
+      window.dataLayer = window.dataLayer || [];
+      if (location.hostname === LIVE_HOST) {
+        (function (w, d, s, l, i) {
+          w[l] = w[l] || [];
+          w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+          var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != "dataLayer" ? "&l=" + l : "";
+          j.async = true;
+          j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+          f.parentNode.insertBefore(j, f);
+        })(window, document, "script", "dataLayer", GTM_ID);
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -41,13 +73,6 @@ const GTM_ID = "GTM-KJVX8GRG";
     />
   </head>
   <body class="bg-cream font-body text-neutral-900">
-    <noscript>
-      <iframe
-        src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"></iframe>
-    </noscript>
     <slot />
   </body>
 </html>

@@ -1,0 +1,382 @@
+{
+  "slug": "landing-page",
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Add src/lib/site.ts: live host, isPublished, live/Test form IDs and INTERIM_COPY",
+      "layer": "domain",
+      "deps": [],
+      "acs": [
+        "AC-11",
+        "AC-13"
+      ],
+      "dod": "site.test.ts passes: isPublished is true only for exactly landing.englishpusher.in.ua and formIdFor returns the live form ID only there, the real Test form ID elsewhere.",
+      "files_hint": [
+        "src/lib/site.ts",
+        "src/lib/site.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t01-site-settings.md",
+      "status": "done"
+    },
+    {
+      "id": "T2",
+      "title": "Copy validate.ts and options.ts from the app, pin field parity, add the LinkedIn address",
+      "layer": "domain",
+      "deps": [],
+      "acs": [
+        "AC-02"
+      ],
+      "dod": "validate.test.ts and options.test.ts pass: name/email messages match the app and every level/goal value is pinned to the app's options.ts.",
+      "files_hint": [
+        "src/lib/validate.ts",
+        "src/lib/validate.test.ts",
+        "src/lib/options.ts",
+        "src/lib/options.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t02-validate-and-options.md",
+      "status": "done"
+    },
+    {
+      "id": "T3",
+      "title": "Copy hubspot.ts: submission with entry address and hubspotutk, 15 s cut-off, failure kind",
+      "layer": "domain",
+      "deps": [],
+      "acs": [
+        "AC-05",
+        "AC-07"
+      ],
+      "dod": "hubspot.test.ts passes: 2xx is ok, non-2xx is rejected, a thrown fetch is network, no answer in 15 s is timeout with a late answer ignored, and pageUri is the entry address.",
+      "files_hint": [
+        "src/lib/hubspot.ts",
+        "src/lib/hubspot.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t03-hubspot-submit.md",
+      "status": "done"
+    },
+    {
+      "id": "T4",
+      "title": "Add src/lib/events.ts: dataLayer payloads for trial_form_open, generate_lead, trial_form_error",
+      "layer": "domain",
+      "deps": [],
+      "acs": [
+        "AC-01",
+        "AC-05"
+      ],
+      "dod": "events.test.ts passes with the exact trial_form_open, generate_lead and trial_form_error payloads and no other keys.",
+      "files_hint": [
+        "src/lib/events.ts",
+        "src/lib/events.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t04-events.md",
+      "status": "done"
+    },
+    {
+      "id": "T5",
+      "title": "Add src/lib/seo.ts: robots meta value, robots.txt and sitemap.xml bodies from INTERIM_COPY",
+      "layer": "domain",
+      "deps": [
+        "T1"
+      ],
+      "acs": [
+        "AC-11"
+      ],
+      "dod": "seo.test.ts passes: interim gives noindex and an empty sitemap, non-interim gives index and one URL, robots.txt always allows crawling and names the sitemap.",
+      "files_hint": [
+        "src/lib/seo.ts",
+        "src/lib/seo.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t05-seo-bodies.md",
+      "status": "done"
+    },
+    {
+      "id": "T6",
+      "title": "Rework BaseLayout head (entry address, host-gated GTM, robots/OG meta) and add robots.txt + sitemap.xml routes",
+      "layer": "wiring",
+      "deps": [
+        "T1",
+        "T5"
+      ],
+      "acs": [
+        "AC-07",
+        "AC-11",
+        "AC-12",
+        "AC-13"
+      ],
+      "dod": "npm run build emits robots.txt, an empty sitemap.xml and index.html with noindex, OG/Twitter meta and the entry-address script before a host-gated GTM snippet; preview on localhost makes no GTM request.",
+      "files_hint": [
+        "src/layouts/BaseLayout.astro",
+        "src/pages/robots.txt.ts",
+        "src/pages/sitemap.xml.ts",
+        "public/og-image.png"
+      ],
+      "file": "docs/features/landing-page/tasks/t06-layout-head.md",
+      "status": "done"
+    },
+    {
+      "id": "T7",
+      "title": "Build the static sections (Hero, InterimBlock, Footer, BookTrialLink) and compose index.astro with Interim copy",
+      "layer": "ui",
+      "deps": [
+        "T2",
+        "T6"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "Built index.html has exactly two #trial-lesson links, no id=\"trial-lesson\", the Instagram and LinkedIn links, and no price/free/length/outcome wording in copy or meta.",
+      "files_hint": [
+        "src/pages/index.astro",
+        "src/components/Hero.astro",
+        "src/components/InterimBlock.astro",
+        "src/components/Footer.astro",
+        "src/components/BookTrialLink.astro"
+      ],
+      "file": "docs/features/landing-page/tasks/t07-static-sections.md",
+      "status": "done"
+    },
+    {
+      "id": "T8",
+      "title": "Copy TrialForm.tsx: fields, pills, validation with focus, trap field and the sending state",
+      "layer": "ui",
+      "deps": [
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "acs": [
+        "AC-02",
+        "AC-08",
+        "AC-13"
+      ],
+      "dod": "Manual dev check: empty name and bad email show both messages with focus on First name and no request; a valid send on localhost targets the Test form ID; check and build pass.",
+      "files_hint": [
+        "src/components/trial-form/TrialForm.tsx",
+        "public/teacher-trial.png",
+        "package.json",
+        "package-lock.json"
+      ],
+      "file": "docs/features/landing-page/tasks/t08-trial-form-fields.md",
+      "status": "done"
+    },
+    {
+      "id": "T9",
+      "title": "Add the thank-you, the send-failed banner with Instagram + LinkedIn, and generate_lead / trial_form_error to TrialForm",
+      "layer": "ui",
+      "deps": [
+        "T4",
+        "T8"
+      ],
+      "acs": [
+        "AC-01",
+        "AC-05",
+        "AC-08",
+        "AC-09"
+      ],
+      "dod": "Manual dev check on the Test form: a confirmed send shows the thank-you by name then exactly one generate_lead; an offline send shows the banner with both links, keeps answers and pushes one trial_form_error with error_kind network.",
+      "files_hint": [
+        "src/components/trial-form/TrialForm.tsx",
+        "public/teacher-celebrate.png"
+      ],
+      "file": "docs/features/landing-page/tasks/t09-trial-form-results.md",
+      "status": "done"
+    },
+    {
+      "id": "T10",
+      "title": "Build TrialDialog (hash open, link intercept, focus trap and return, trial_form_open) and mount it with client:idle",
+      "layer": "ui",
+      "deps": [
+        "T4",
+        "T7",
+        "T9"
+      ],
+      "acs": [
+        "AC-03",
+        "AC-04"
+      ],
+      "dod": "dialog.test.ts passes and the manual preview check holds: answers kept across openings with one trial_form_open each, #trial-lesson opens once and is removed on close, focus trapped and returned; CLAUDE.md and architecture-map show client:idle.",
+      "files_hint": [
+        "src/components/trial-form/TrialDialog.tsx",
+        "src/lib/dialog.ts",
+        "src/lib/dialog.test.ts",
+        "src/pages/index.astro",
+        "CLAUDE.md",
+        "docs/architecture-map.md"
+      ],
+      "file": "docs/features/landing-page/tasks/t10-trial-dialog.md",
+      "status": "done"
+    },
+    {
+      "id": "T11",
+      "title": "Write the release checklist: one-time setup, pre-publish checks and the end-to-end send",
+      "layer": "docs",
+      "deps": [
+        "T6",
+        "T10"
+      ],
+      "acs": [
+        "AC-06",
+        "AC-10",
+        "AC-12",
+        "AC-13"
+      ],
+      "dod": "release-checklist.md exists with setup, pre-publish and end-to-end sections, each item naming its owner and the AC/NFR it proves, covering AC-06, AC-10, AC-12 and AC-13.",
+      "files_hint": [
+        "docs/features/landing-page/release-checklist.md"
+      ],
+      "file": "docs/features/landing-page/tasks/t11-release-checklist.md",
+      "status": "done"
+    },
+    {
+      "id": "T12",
+      "title": "Pin two hubspot.ts edge cases: an answer just before the 15 s cut-off and an answer body that never changes the result",
+      "layer": "domain",
+      "deps": [
+        "T3"
+      ],
+      "acs": [
+        "AC-05",
+        "AC-09"
+      ],
+      "dod": "hubspot.test.ts asserts that a 2xx answer at 14,999 ms under mock timers is {ok:true} and that a 2xx whose body says the contact already exists is {ok:true}; npm test green.",
+      "files_hint": [
+        "src/lib/hubspot.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t12-hubspot-edge-tests.md",
+      "status": "done"
+    },
+    {
+      "id": "T13",
+      "title": "Move the form's user-facing strings into one exported copy object and check it with findPromises",
+      "layer": "ui",
+      "deps": [
+        "T9"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "src/lib/formCopy.ts exports the form's copy (headline, subline, labels, placeholders, thank-you, send-failed banner, buttons); TrialForm.tsx renders only from it; formCopy.test.ts runs findPromises over every string (and the GOALS/LEVELS labels) and passes; npm test + tsc green.",
+      "files_hint": [
+        "src/lib/formCopy.ts",
+        "src/lib/formCopy.test.ts",
+        "src/components/trial-form/TrialForm.tsx"
+      ],
+      "file": "docs/features/landing-page/tasks/t13-form-copy.md",
+      "status": "done"
+    },
+    {
+      "id": "T14",
+      "title": "Add the Local UI pass to the release checklist: one checkbox per e2e-through-UI row of AC-01..04, 08, 09",
+      "layer": "docs",
+      "deps": [
+        "T11",
+        "T13"
+      ],
+      "acs": [
+        "AC-01",
+        "AC-02",
+        "AC-03",
+        "AC-04",
+        "AC-08",
+        "AC-09"
+      ],
+      "dod": "release-checklist.md §2 has a 'Local UI pass (preview, Test form)' block with one checkbox per manual e2e-through-UI row of spec.md test plan for AC-01, AC-02, AC-03, AC-04, AC-08, AC-09, each naming its AC and owner; links resolve.",
+      "files_hint": [
+        "docs/features/landing-page/release-checklist.md"
+      ],
+      "file": "docs/features/landing-page/tasks/t14-checklist-ui-pass.md",
+      "status": "done"
+    },
+    {
+      "id": "T15",
+      "title": "Release checklist: a trap-field step that fires React's onChange, and the retry clause of the offline row",
+      "layer": "docs",
+      "deps": [
+        "T14"
+      ],
+      "acs": [
+        "AC-05",
+        "AC-08"
+      ],
+      "dod": "release-checklist.md: the AC-08 trap step fills company_url from the console with the native value setter plus an input event (which React's onChange sees) before sending; the offline-failure row adds 'press Send again while offline: one more trial_form_error (network), still no generate_lead'; links resolve.",
+      "files_hint": [
+        "docs/features/landing-page/release-checklist.md"
+      ],
+      "file": "docs/features/landing-page/tasks/t15-checklist-trap-retry.md",
+      "status": "done"
+    },
+    {
+      "id": "T16",
+      "title": "Replace the regex guard in formCopy.test.ts with a TypeScript syntax-tree walk of TrialForm and TrialDialog",
+      "layer": "ui",
+      "deps": [
+        "T13"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "formCopy.test.ts parses each component with the typescript compiler API and fails on: JSX text with a letter; a string or template literal with a letter inside a JSX child expression (incl. ternaries / &&); any string in a text-bearing attribute (alt, title, placeholder, label, hint, aria-label/description/roledescription/valuetext/placeholder) in either quote form; a module-level string constant used in those places. Each bypass from the review goes red against a mutant; both components pass; npm test green.",
+      "files_hint": [
+        "src/lib/jsxText.ts",
+        "src/lib/jsxText.test.ts",
+        "src/lib/formCopy.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t16-form-copy-guard.md",
+      "status": "done"
+    },
+    {
+      "id": "T17",
+      "title": "Scan the validation messages for promises and name validate.ts and options.ts in the AC-10 approval pointer",
+      "layer": "ui",
+      "deps": [
+        "T15",
+        "T16"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "formCopy.test.ts runs findPromises over every message validateTrialForm can return (empty form, invalid email); the test header and release-checklist.md's Tetiana approval item name validate.ts (error messages) and options.ts (pill labels) alongside FORM_COPY; npm test green.",
+      "files_hint": [
+        "src/lib/formCopy.test.ts",
+        "docs/features/landing-page/release-checklist.md"
+      ],
+      "file": "docs/features/landing-page/tasks/t17-validation-copy.md",
+      "status": "done"
+    },
+    {
+      "id": "T18",
+      "title": "Harden the jsxText guard: Field's error prop, constants in any scope, non-ASCII text and HTML entities",
+      "layer": "ui",
+      "deps": [
+        "T16"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "jsxText.ts treats error as a text prop; resolves const/let declarations in every scope (initializer checked as a rendered value, object-literal fields via property access); counts text by Unicode letters, digits and currency symbols after stripping HTML entities. jsxText.test.ts has caught cases for each (error prop, in-function const, ternary const, let, object field, a bare ₴ price) and an ignored &nbsp; case; both real components still pass; npm test + tsc green.",
+      "files_hint": [
+        "src/lib/jsxText.ts",
+        "src/lib/jsxText.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t18-jsx-guard-hardening.md",
+      "status": "done"
+    },
+    {
+      "id": "T19",
+      "title": "Follow calls to local helper functions in the jsxText guard",
+      "layer": "ui",
+      "deps": [
+        "T18"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "When a rendered call's callee is an identifier, jsxText.ts checks what its local arrow / function-expression initializers and same-named function declarations return, under the cycle guard. jsxText.test.ts: caught cases for an arrow helper and a function declaration, an ignored pillClass-style helper used only in className; both real components pass; npm test + tsc green.",
+      "files_hint": [
+        "src/lib/jsxText.ts",
+        "src/lib/jsxText.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t19-jsx-guard-helpers.md",
+      "status": "done"
+    }
+  ]
+}

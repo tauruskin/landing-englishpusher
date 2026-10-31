@@ -37,7 +37,8 @@ public/                       served as-is (images, favicon)
 ## Conventions
 
 - **Static by default.** Sections are `.astro`. React only where interactivity is needed, as an
-  island hydrated with `client:visible` (e.g. `<TrialForm client:visible />`).
+  island hydrated with `client:idle` (e.g. `<TrialDialog client:idle />`, which opens on
+  `#trial-lesson` links — [ADR-0002](docs/features/landing-page/adr/0002-open-trial-dialog-island-via-trial-lesson-hash-links.md)).
 - **Styling:** Tailwind utilities with the brand tokens only: `brand` (#f07c1a), `cream`
   (#faf8f5), `font-display` (Space Grotesk), `font-body` (Inter). No other CSS approach.
 - **Tests:** logic lives in `src/lib/*.ts` with a sibling `*.test.ts`. UI and the HubSpot
