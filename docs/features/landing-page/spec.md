@@ -32,8 +32,11 @@ the content of either answer, and the lead pipeline it plugs into is already liv
 want the page (D1) or her posts bring too few visitors (D2), the roadmap falls back to improving the
 app hub instead, and the skeleton becomes unused.
 
-Committed approach: the page is a frame with **Interim copy**, and every call to action opens the
-same trial form the app already uses. The form keeps the app's fields, language (English) and
+Committed approach: the page is a frame with **Interim copy**: a hero with a neutral headline and a
+"Book a trial lesson" button, one short interim block with a second button, and a footer with links
+to Tetiana's Instagram and LinkedIn (their clicks record the existing `contact_click` event). It has
+no placeholder sections for roadmap step 3. Every call to action opens the same trial form the app
+already uses. The form keeps the app's fields, language (English) and
 validation, so requests land in the same CRM form and reach the deal pipeline, the Leads Bot and the
 Monday report unchanged. It deliberately differs from the app's form in four ways (owner decisions
 2026-10-31): one form serves every call to action on the page; a failed send also offers LinkedIn
@@ -58,7 +61,8 @@ those maps to an acceptance criterion below.
 ## 2. Goals
 
 - Every Trial lesson request sent from the Landing page reaches the existing lead pipeline as
-  reliably as one sent from the app, and a Prospective student never loses typed answers.
+  reliably as one sent from the app, and a Prospective student never loses typed answers while the
+  page is open.
 - Landing leads can be told apart from app leads and counted from the first request, so the
   brief's success measure can be tracked once the page launches.
 - The page is ready for search and link sharing at its own address, without interim copy reaching
@@ -140,19 +144,19 @@ those maps to an acceptance criterion below.
 
 **Given** a Prospective student is anywhere on the Landing page
 **When** they press any "Book a trial lesson" button
-**Then** the one trial form opens in a window over the page and the page records "trial_form_open" once for that opening; if they close the window and later open it from a different button, the answers they had typed are still there
+**Then** the one trial form opens in a window over the page and the page records "trial_form_open" once for that opening; if they close the window and later open it from a different button, the answers they had typed are still there for as long as the page stays open (reloading the page clears them); after a confirmed send, opening the form again shows an empty form
 
 ### AC-04 (US-02) — happy
 
-**Given** a Prospective student follows a shared link to the Landing page that points straight at the trial form
+**Given** a Prospective student follows a shared link to the Landing page that points straight at the trial form (an address ending in `#trial-lesson`, as in the app)
 **When** the page loads
-**Then** the trial form opens once, straight away; after they close it, it does not reopen by itself while they scroll or read the page
+**Then** the trial form opens once, straight away, and the page records "trial_form_open" once for that opening; after they close it, `#trial-lesson` is removed from the address and the form does not reopen by itself while they scroll, read or reload the page
 
 ### AC-05 (US-03) — error
 
 **Given** a Prospective student has filled in the trial form correctly
-**When** sending fails because the CRM refuses it, the connection drops, or no answer comes within 15 seconds
-**Then** the Prospective student sees that the request did not go through, with links to write to Tetiana on Instagram and on LinkedIn; every answer they typed stays in the form so they can try again; no "generate_lead" event is recorded; a "trial_form_error" event naming only the kind of failure (no personal data) is recorded so the Operator can count lost requests
+**When** sending fails because the CRM refuses it, the connection drops, or no answer comes within 15 seconds (the page then cancels the send and ignores any later answer)
+**Then** the Prospective student sees that the request did not go through, with links to write to Tetiana on Instagram and on LinkedIn; every answer they typed stays in the form so they can try again; no "generate_lead" event is recorded; one "trial_form_error" event per failed attempt is recorded, naming only the kind of failure (rejected, network or timeout; no personal data), so the Operator can count lost requests; a send stopped by the form's own checks (AC-02) records nothing
 
 ### AC-06 (US-04) — cross-context
 
@@ -164,7 +168,7 @@ those maps to an acceptance criterion below.
 
 **Given** a Prospective student sends a Trial lesson request from the Landing page, with or without the visitor-tracking cookie (an ad blocker may remove it)
 **When** the Operator opens that request in the CRM
-**Then** the request carries the Landing page's address, including any campaign tags the visit arrived with, so the Operator can tell it is a Landing lead and not a lead from the app
+**Then** the request's page-address field in the CRM shows the address the visitor first arrived at, including any campaign tags, even if the page has changed the address since (for example by removing `#trial-lesson`), so the Operator can tell it is a Landing lead and not a lead from the app
 
 ### AC-08 (US-01) — domain invariant
 
@@ -182,13 +186,13 @@ those maps to an acceptance criterion below.
 
 **Given** the Landing page shows Interim copy
 **When** a Prospective student reads any text on the page, the form, the page title and description shown in search results, or the preview of a shared link
-**Then** the invariant "Interim copy makes no promises" holds: nothing states a price, that the trial lesson is free, its length, or a learning result; the only offer is to book a trial lesson with Tetiana
+**Then** the invariant "Interim copy makes no promises" holds: nothing states a price, that the trial lesson is free, its length, or a learning result (any outcome claim such as "speak confidently at work" or "improve your English fast" is banned); the only offer is to book a trial lesson with Tetiana; Tetiana approves all Interim copy, including the form's headline and thank-you, before the page is published
 
 ### AC-11 (US-07) — domain invariant
 
 **Given** the Landing page shows Interim copy
 **When** a search engine visits the page or reads the site's list of pages offered for search
-**Then** the invariant "Interim copy is never indexed" holds: the page can be crawled but asks not to be indexed, and it is left out of the list of pages offered for search; the release that replaces the Interim copy lifts both at the same time
+**Then** the invariant "Interim copy is never indexed" holds: the page can be crawled but asks not to be indexed, and it is left out of the list of pages offered for search; one setting marks the page as showing Interim copy and drives both rules, so the release that replaces the Interim copy lifts both at the same time; while the page is interim, the site's crawling rules allow crawling and point to the list of pages, and that list is published empty
 
 ### AC-12 (US-07) — happy
 
@@ -198,9 +202,9 @@ those maps to an acceptance criterion below.
 
 ### AC-13 (US-06) — authorization
 
-**Given** the Operator runs the page on their own computer, in a preview, or anywhere other than the published Landing page
+**Given** the Operator runs the page on their own computer, in a preview, or anywhere other than the published Landing page (the published Landing page is the page opened at exactly `landing.englishpusher.in.ua`; the production build opened anywhere else counts as not published)
 **When** they open the page and send the trial form
-**Then** no analytics events are recorded and the request goes to the Test form, which no lead handling reads, so no deal, Leads Bot card or report line appears (the CRM still records a contact for each test send, which the Operator deletes the same day); only the published Landing page sends to the live CRM form, and the one end-to-end check on the published page uses a clearly marked test name whose contact and deal the Operator deletes the same day
+**Then** no analytics are recorded at all (no events, page views or session recordings, because the tag manager is not loaded) and the request goes to the Test form, which no lead handling reads, so no deal, Leads Bot card or report line appears (the CRM still records a contact for each test send, which the Operator deletes the same day); only the published Landing page sends to the live CRM form, and the one end-to-end check on the published page uses a clearly marked test name whose contact and deal the Operator deletes the same day
 
 ## 6. Non-functional requirements
 
@@ -209,20 +213,21 @@ those maps to an acceptance criterion below.
 | Page speed (mobile) | Largest content shown ≤ 2.5 s at p75; mobile performance score ≥ 90 | Clarity Core Web Vitals filtered to the Landing page's host; a mobile Lighthouse run before each release |
 | Send feedback | Thank-you or failure message within ≤ 15 s of sending, in 100% of sends | The 15-second cut-off in the form logic, covered by a unit test |
 | Lead delivery | A confirmed Trial lesson request becomes a Leads Bot card within ≤ 10 min | Timestamps recorded in the end-to-end check (the bot polls every 5 min) |
-| Lost sends | `trial_form_error` ÷ (`generate_lead` + `trial_form_error`) ≤ 5% per calendar month | GA4 events (needs a tag-manager tag for `trial_form_error`) |
+| Lost sends | `trial_form_error` ÷ (`generate_lead` + `trial_form_error`) ≤ 5% per calendar month | GA4 events, counted per failed attempt (needs a tag-manager tag for `trial_form_error`) |
 | Availability | ≥ 99.5% per calendar month | External uptime check on the Landing page's address, every ≤ 5 min (tool chosen in design) |
-| Accessibility | Trial form fully usable by keyboard alone and by a screen reader; 0 serious or critical issues; accessibility score ≥ 95 | Automated accessibility check (Lighthouse) before each release |
+| Accessibility | Trial form fully usable by keyboard alone and by a screen reader: the window takes focus when it opens, Tab stays inside it, Escape closes it, and focus returns to the button that opened it; 0 serious or critical issues; Lighthouse accessibility score ≥ 95 | Before each release: an axe scan (serious/critical count), a Lighthouse run (score), and one manual screen-reader pass (NVDA or VoiceOver) through open → fill → send → close |
 | Field parity | 100% of English-level and goal values sent are values the live CRM form accepts | A unit test pins the values to the app's copy (`options.ts`) |
 
 ## 6.1 Security / privacy
 
 - **Data classification:** confidential, because the form carries the contact details of private persons.
-- **Personal data touched:** the page stores nothing. It passes the existing fields to the CRM: first
+- **Personal data touched:** the page stores nothing: typed answers live only in the open page and are
+  never saved in the browser (AC-03). It passes the existing fields to the CRM: first
   name and email (required), English level, learning goals, a messenger handle or phone, and a free-text
   message (optional), all personal contact data. Analytics events carry no personal data
   (`trial_form_error` names only the kind of failure). No new fields (brief §5).
 - **AuthZ/AuthN impact:** there is no login and the page is public. Two rules apply: only the published
-  Landing page sends to the live CRM form, and everything else sends to the Test form (AC-13); the form
+  Landing page (opened at exactly `landing.englishpusher.in.ua`) sends to the live CRM form, and everything else sends to the Test form (AC-13); the form
   never reveals whether an email is already known (AC-09). The CRM form and portal identifiers are
   public by design (ADR-0003).
 - **Abuse cases:**
@@ -261,3 +266,5 @@ those maps to an acceptance criterion below.
 - [ ] How is drift detected between the Landing page's form copy, the app's form, the live CRM form and the Test form? Default now: the field-parity unit test plus a note in both repos. — owner: Operator, due: before `/sdd:tasks landing-page`
 - [ ] Does the Leads Bot read only the live CRM form, or every form (its notes say it "catches leads from any future form")? Default now: check the polling workflow and, if needed, limit it to the live form, so the Test form stays out of deals, cards and reports (AC-13). — owner: Operator, due: before `/sdd:tasks landing-page`
 - [ ] Does the trial form need a personal-data notice or consent line (for the app's form too)? Default now: none, as in the app. — owner: Operator with Tetiana, due: before launch (roadmap step 6)
+- [ ] What is the Test form's ID? Default now: the Operator creates it in HubSpot with the same fields as the live "Trial lesson request" form and records its ID in the repo's config (AC-13). — owner: Operator, due: before `/sdd:tasks landing-page`
+- [ ] What is Tetiana's LinkedIn address for the failure message (AC-05) and the footer? Default now: her own personal profile, confirmed by her. — owner: Operator with Tetiana, due: before `/sdd:tasks landing-page`
