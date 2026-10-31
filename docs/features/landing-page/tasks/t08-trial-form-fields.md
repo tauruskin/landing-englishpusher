@@ -9,8 +9,8 @@ files_hint: ["src/components/trial-form/TrialForm.tsx", "public/teacher-trial.pn
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "M"
 context_budget: "M"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 <!-- The governing rule of this file: **inline the slice the task actually needs, name where it came
