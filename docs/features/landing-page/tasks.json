@@ -86,7 +86,7 @@
         "src/lib/seo.test.ts"
       ],
       "file": "docs/features/landing-page/tasks/t05-seo-bodies.md",
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "T6",

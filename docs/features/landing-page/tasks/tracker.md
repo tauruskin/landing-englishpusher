@@ -12,7 +12,7 @@
 | T2 | Copy validate.ts + options.ts, pin parity, add LinkedIn | domain | Oleksandr Pushkar (Operator) | S | — | done | COMMIT |
 | T3 | Copy hubspot.ts: entry address, 15 s cut-off, failure kind | domain | Oleksandr Pushkar (Operator) | M | — | done | COMMIT |
 | T4 | events.ts: three dataLayer payloads | domain | Oleksandr Pushkar (Operator) | S | — | done | COMMIT |
-| T5 | seo.ts: robots meta, robots.txt, sitemap.xml | domain | Oleksandr Pushkar (Operator) | S | T1 | todo | — |
+| T5 | seo.ts: robots meta, robots.txt, sitemap.xml | domain | Oleksandr Pushkar (Operator) | S | T1 | done | COMMIT |
 | T6 | BaseLayout head + robots/sitemap routes | wiring | Oleksandr Pushkar (Operator) | M | T1, T5 | todo | — |
 | T7 | Static sections + index.astro with Interim copy | ui | Oleksandr Pushkar (Operator) | S | T2, T6 | todo | — |
 | T8 | TrialForm: fields, validation, trap field, sending | ui | Oleksandr Pushkar (Operator) | M | T1, T2, T3 | todo | — |
