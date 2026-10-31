@@ -90,7 +90,7 @@ const arrowClass = [
   if (root && track && nav && prev && next) {
     const cards = Array.from(track.children) as HTMLElement[];
     const dots = Array.from(root.querySelectorAll<HTMLElement>("[data-dot]"));
-    const cardStep = () => cards[0].offsetWidth + parseFloat(getComputedStyle(track).columnGap) || 0;
+    const cardStep = () => cards[0].offsetWidth + (parseFloat(getComputedStyle(track).columnGap) || 0);
     const maxScroll = () => track.scrollWidth - track.clientWidth;
 
     const update = () => {
