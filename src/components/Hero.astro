@@ -9,7 +9,9 @@ const tagStyles = [
   "-right-3 bottom-[12%] rotate-[5deg] bg-white text-stone-900",
   "bottom-6 left-2 rotate-[-3deg] bg-stone-900 text-cream",
 ];
-if (HERO.tags.length !== tagStyles.length) throw new Error("Hero: HERO.tags and tagStyles must have the same length");
+if (HERO.tags.length !== tagStyles.length) {
+  throw new Error("Hero: HERO.tags and tagStyles must have the same length");
+}
 ---
 
 <header class="relative overflow-hidden">
