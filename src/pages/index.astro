@@ -1,8 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Hero from "../components/Hero.astro";
+import Marquee from "../components/Marquee.astro";
+import GoalPicker from "../components/GoalPicker.astro";
 import TourStrip from "../components/TourStrip.astro";
-import InterimBlock from "../components/InterimBlock.astro";
+import MeetTetiana from "../components/MeetTetiana.astro";
+import CtaBand from "../components/CtaBand.astro";
 import Footer from "../components/Footer.astro";
 import TrialDialog from "../components/trial-form/TrialDialog.tsx";
 
@@ -14,11 +17,14 @@ const copy = {
 ---
 
 <BaseLayout title={copy.title} description={copy.description}>
-  <main class="mx-auto max-w-3xl px-6">
+  <main>
     <Hero />
+    <Marquee />
+    <GoalPicker />
     <TourStrip />
-    <InterimBlock />
-    <Footer />
+    <MeetTetiana />
+    <CtaBand />
   </main>
+  <Footer />
   <TrialDialog client:idle />
 </BaseLayout>

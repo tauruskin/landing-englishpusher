@@ -6,6 +6,18 @@
   --color-cream: #faf8f5;
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
+
+  /* Redesign motion (spec "Motion"): only transform/opacity, all stopped by motion-reduce:animate-none. */
+  --animate-marquee: marquee 60s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 40s linear infinite;
+
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+  @keyframes float {
+    50% { transform: translateY(-8px) rotate(2deg); }
+  }
 }
 
 @layer base {
@@ -21,5 +33,25 @@
   h3,
   h4 {
     font-family: var(--font-display);
+  }
+}
+
+/* Reveal on scroll (spec "Motion"). BaseLayout adds .js-reveal to <html> only when JS runs and
+   reduced motion is off, so without JS everything is simply visible. */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.js-reveal [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+@media print {
+  .js-reveal [data-reveal] {
+    opacity: 1;
+    transform: none;
   }
 }

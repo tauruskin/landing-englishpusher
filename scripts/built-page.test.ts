@@ -5,7 +5,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { findPromises } from "../src/lib/copyRules.ts";
-import { INSTAGRAM_URL, LINKEDIN_URL } from "../src/lib/options.ts";
+import { MARQUEE } from "../src/lib/landingCopy.ts";
+import { GOALS, INSTAGRAM_URL, LINKEDIN_URL } from "../src/lib/options.ts";
 
 const html = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
 
@@ -33,9 +34,23 @@ test("visible text, title and link-preview text make no promises (AC-10)", () =>
   for (const text of texts) assert.deepEqual(findPromises(text), [], text.slice(0, 120));
 });
 
-test("exactly two Book links point at #trial-lesson and nothing has that id (ADR-0002)", () => {
-  assert.equal([...html.matchAll(/<a\b[^>]*href="#trial-lesson"/g)].length, 2);
+test("exactly three Book links point at #trial-lesson and nothing has that id (ADR-0002)", () => {
+  // hero, the goal picker's floating bar, the call-to-action panel
+  assert.equal([...html.matchAll(/<a\b[^>]*href="#trial-lesson"/g)].length, 3);
   assert.doesNotMatch(html, /id="trial-lesson"/);
+});
+
+test("the goal picker has six unpressed goal buttons", () => {
+  const tiles = [...html.matchAll(/<button\b[^>]*data-goal="[^"]+"[^>]*>/g)].map((m) => m[0]);
+  assert.equal(tiles.length, 6);
+  for (const tag of tiles) assert.match(tag, /aria-pressed="false"/);
+});
+
+test("every goal button carries a value the trial form accepts", () => {
+  const allowed: string[] = GOALS.map((goal) => goal.value);
+  const values = [...html.matchAll(/data-goal="([^"]+)"/g)].map((m) => m[1]);
+  assert.ok(values.length > 0);
+  for (const value of values) assert.ok(allowed.includes(value), value);
 });
 
 test("the footer links Tetiana's Instagram and LinkedIn in a new tab", () => {
@@ -46,4 +61,35 @@ test("the footer links Tetiana's Instagram and LinkedIn in a new tab", () => {
     assert.match(tag, /target="_blank"/);
     assert.match(tag, /rel="noopener[^"]*"/);
   }
+});
+
+test("the marquee reads each course once; the repeats are hidden", () => {
+  const copies = [...html.matchAll(/<div\b[^>]*data-marquee-copy[^>]*>/g)].map((m) => m[0]);
+  assert.ok(copies.length >= 2 && copies.length % 2 === 0, "an even number of copies keeps the -50% loop seamless");
+  assert.equal(copies.filter((tag) => !/aria-hidden="true"/.test(tag)).length, 1);
+  const visible = [...html.matchAll(/<div\b(?![^>]*aria-hidden)[^>]*data-marquee-copy[^>]*>([^]*?)<\/div>/g)];
+  assert.equal(visible.length, 1);
+  const names = [...visible[0][1].matchAll(/<span>([^<]*)<\/span>/g)].map((m) => decode(m[1]));
+  assert.deepEqual(names, [...MARQUEE]);
+});
+
+test("the tour starts in its no-JS state: arrows hidden, a focusable strip of five steps, step 1 reached", () => {
+  const nav = html.match(/<div\b[^>]*data-tour-nav[^>]*>/)?.[0];
+  assert.ok(nav && /\shidden(?=[\s>=])/.test(nav), "arrows are hidden until the script runs");
+  const track = html.match(/<ol\b[^>]*data-tour-track[^>]*>([^]*?)<\/ol>/);
+  assert.ok(track, "the tour strip exists");
+  assert.match(track[0].match(/<ol\b[^>]*>/)![0], /tabindex="0"/);
+  const items = [...track[1].matchAll(/<li\b[^>]*>/g)].map((m) => m[0]);
+  assert.equal(items.length, 5);
+  assert.equal(items.filter((tag) => /\sdata-reached/.test(tag)).length, 1);
+});
+
+test("there is exactly one footer and it comes after </main> (the goals bar watches it)", () => {
+  assert.equal([...html.matchAll(/<footer[\s>]/g)].length, 1);
+  assert.ok(html.indexOf("<footer") > html.indexOf("</main>"));
+});
+
+test("the Meet Tetiana ring path has one id and the text points at it", () => {
+  assert.equal([...html.matchAll(/id="meet-ring"/g)].length, 1);
+  assert.match(html, /href="#meet-ring"/);
 });

@@ -1,0 +1,31 @@
+---
+// Scrolling band of course names (redesign spec, Page 2). Six identical copies of the list; the
+// track slides left by 50% (exactly three copies) for a seamless loop, so three copies must be
+// wider than the screen (the 60s duration in global.css is tuned for this length). Only the first
+// copy is read by screen readers; the other five are aria-hidden repeats. Stops under reduced
+// motion.
+import { MARQUEE } from "../lib/landingCopy.ts";
+
+const copies = [1, 2, 3, 4, 5, 6]; // even count; half the track (the -50% shift) must be wider than the viewport
+---
+
+<div class="overflow-hidden border-y border-stone-200 bg-cream py-4">
+  <div class="flex w-max animate-marquee motion-reduce:animate-none">
+    {
+      copies.map((copy) => (
+        <div
+          data-marquee-copy
+          aria-hidden={copy > 1 ? "true" : undefined}
+          class="flex shrink-0 items-center gap-10 pr-10 font-display text-xl font-semibold text-stone-600"
+        >
+          {MARQUEE.map((item) => (
+            <>
+              <span>{item}</span>
+              <span aria-hidden="true" class="text-brand">✦</span>
+            </>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</div>

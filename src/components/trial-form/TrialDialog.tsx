@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import TrialForm from "./TrialForm.tsx";
 import { EMPTY_VALUES, type TrialFormValues } from "../../lib/options.ts";
+import { goalsAfterOpening, mergeGoals } from "../../lib/goals.ts";
 import { pushEvent } from "../../lib/events.ts";
 import { FORM_COPY } from "../../lib/formCopy.ts";
 import {
@@ -44,14 +45,18 @@ export default function TrialDialog() {
   // A click only closes the window when it both started and ended on the backdrop (a
   // text-selection drag out of an input must not close it).
   const pressedOnBackdrop = useRef(false);
+  // Goals picked on the page, kept until the next opening so a form reset does not drop them.
+  const pickedGoals = useRef<string[]>([]);
 
   const dispatch = useCallback((action: DialogAction) => {
     const step = dialogStep(state.current, action);
     state.current = step.state;
     if (step.resetForm) {
-      setValues(EMPTY_VALUES);
+      const picked = pickedGoals.current;
+      setValues({ ...EMPTY_VALUES, goals: goalsAfterOpening([], picked, true) });
       setFormKey((k) => k + 1);
     }
+    if (action === "open") pickedGoals.current = [];
     for (const event of step.events) pushEvent(window as { dataLayer?: unknown[] }, event);
     if (step.state.open) setMounted(true);
     setOpen(step.state.open);
@@ -93,6 +98,29 @@ export default function TrialDialog() {
       document.removeEventListener("click", onClick);
     };
   }, [openWindow]);
+
+  // Goals picked in the page's goal picker (redesign spec): tick them in the form. The picker sets
+  // window.__pendingTrialGoals (read once on mount, for a click before hydration) and dispatches
+  // a "trial:goals" event (for clicks after hydration).
+  useEffect(() => {
+    const page = window as Window & { __pendingTrialGoals?: unknown };
+    const addGoals = (goals: unknown) => {
+      if (!Array.isArray(goals)) return;
+      const picked = goals.filter((goal): goal is string => typeof goal === "string");
+      setValues((v) => ({ ...v, goals: mergeGoals(v.goals, picked) }));
+    };
+    addGoals(page.__pendingTrialGoals);
+    delete page.__pendingTrialGoals;
+    const onGoals = (e: Event) => {
+      const goals = (e as CustomEvent<{ goals?: unknown }>).detail?.goals;
+      // Kept for the opening that follows this event, which may reset the form first.
+      if (Array.isArray(goals)) pickedGoals.current = goals.filter((g): g is string => typeof g === "string");
+      addGoals(goals);
+      delete page.__pendingTrialGoals;
+    };
+    window.addEventListener("trial:goals", onGoals);
+    return () => window.removeEventListener("trial:goals", onGoals);
+  }, []);
 
   // While open: Escape closes, Tab stays inside, the page behind is inert and does not scroll, focus
   // goes to the first field. On close: undo all that, then return focus to the opener.

@@ -1,19 +1,68 @@
 ---
+// Hero (redesign spec, Page 1): text left, the waving mascot floating in an orange circle on the
+// right with three tilted tags. All copy from landingCopy.ts; the Book button is BookTrialLink.
 import BookTrialLink from "./BookTrialLink.astro";
+import { HERO, MASCOTS } from "../lib/landingCopy.ts";
 
-// Interim copy (AC-10: no price, "free", lesson length or learning result). Tetiana approves the
-// wording before publishing (release checklist).
-const copy = {
-  headline: "English lessons with Tetiana",
-  sentence: "Individual English lessons for adults and IT professionals.",
-};
+const tagStyles = [
+  "-left-4 top-10 rotate-[-6deg] bg-white text-stone-900",
+  "-right-3 bottom-[12%] rotate-[5deg] bg-white text-stone-900",
+  "bottom-6 left-2 rotate-[-3deg] bg-stone-900 text-cream",
+];
+if (HERO.tags.length !== tagStyles.length) {
+  throw new Error("Hero: HERO.tags and tagStyles must have the same length");
+}
 ---
 
-<section class="flex flex-col items-start gap-6 py-16 sm:py-24">
-  <img src="/logo.png" alt="EnglishPusher" width="160" height="160" class="h-28 w-auto sm:h-36" />
-  <h1 class="font-display text-4xl font-bold leading-tight text-neutral-900 sm:text-5xl">
-    {copy.headline}
-  </h1>
-  <p class="max-w-xl text-lg text-neutral-600">{copy.sentence}</p>
-  <BookTrialLink />
-</section>
+<header class="relative overflow-hidden">
+  <div aria-hidden="true" class="pointer-events-none absolute -right-40 -top-40 h-[34rem] w-[34rem] rounded-full bg-brand/15"></div>
+  <div aria-hidden="true" class="pointer-events-none absolute -bottom-32 right-[30%] h-64 w-64 rounded-full bg-brand/10"></div>
+  <div class="relative mx-auto grid max-w-6xl items-center gap-10 px-6 pb-20 pt-10 md:grid-cols-[1.15fr_0.85fr] md:pt-14">
+    <div>
+      <img src="/logo.webp" alt="EnglishPusher" width="160" height="160" class="h-16 w-auto" />
+      <p class="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-sm font-medium shadow-[0_6px_16px_-10px_rgba(120,60,10,0.4)]">
+        <span aria-hidden="true" class="relative flex h-2 w-2">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60 motion-reduce:animate-none"></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+        </span>
+        {HERO.badge}
+      </p>
+      <h1 class="mt-5 font-display text-5xl font-bold leading-[1.02] tracking-tight md:text-6xl">
+        {HERO.title}{" "}
+        <span class="relative whitespace-nowrap">
+          <span class="relative z-10">{HERO.titleHighlight}</span>
+          <span aria-hidden="true" class="absolute inset-x-0 bottom-1 h-4 rounded bg-brand/35"></span>
+        </span>
+      </h1>
+      <p class="mt-5 max-w-[46ch] text-lg leading-relaxed text-stone-600">{HERO.subline}</p>
+      <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+        <BookTrialLink size="lg" />
+        <a
+          href="#goals"
+          class="font-medium text-stone-800 underline decoration-brand decoration-2 underline-offset-4 hover:text-stone-950 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
+        >
+          {HERO.goalsLink}
+        </a>
+      </div>
+    </div>
+    <div class="relative mx-auto w-72 md:w-full md:max-w-sm">
+      <div aria-hidden="true" class="absolute inset-6 rounded-full bg-brand/30"></div>
+      <img
+        src={MASCOTS.wave.src}
+        alt=""
+        width={MASCOTS.wave.width}
+        height={MASCOTS.wave.height}
+        fetchpriority="high"
+        decoding="async"
+        class="relative h-auto w-full animate-float drop-shadow-[0_24px_30px_rgba(120,60,10,0.25)] motion-reduce:animate-none"
+      />
+      {
+        HERO.tags.map((tag, i) => (
+          <span aria-hidden="true" class={`absolute rounded-2xl px-3 py-2 text-sm font-semibold shadow-[0_10px_24px_-12px_rgba(120,60,10,0.45)] ${tagStyles[i]}`}>
+            {tag}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</header>

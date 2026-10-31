@@ -1,0 +1,138 @@
+---
+// Goal picker (redesign spec, Page 3): "What do you want English for?". Six tiles map to the trial
+// form's GOALS values. The script below toggles tiles, swaps the mascot, shows a floating bar and,
+// when the bar's Book link is clicked, hands the chosen goals to TrialDialog: it sets
+// window.__pendingTrialGoals and dispatches a "trial:goals" window event. The link's own click
+// listener runs before TrialDialog's document-level one. Without JS the tiles do nothing.
+import BookTrialLink from "./BookTrialLink.astro";
+import { MASCOTS, PICKER, type GoalValue } from "../lib/landingCopy.ts";
+
+const layout: Record<GoalValue, string> = {
+  it_english: "lg:col-span-2 lg:row-span-2",
+  work_business: "lg:col-span-2",
+  speaking: "",
+  travel: "",
+  everyday_life: "lg:col-span-3",
+  other: "",
+};
+// 24×24 stroke icons (path data).
+const icons: Record<GoalValue, string> = {
+  it_english: "M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M8 21h8 M9 9l-2 2 2 2 M15 9l2 2-2 2",
+  work_business: "M5 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2 M3 13h18",
+  speaking: "M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z",
+  travel: "M2 16l20-6-3-3-6 2-6-5-2 1 4 6-4 1-2-2-2 1z",
+  everyday_life: "M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z",
+  other: "M12 5v14 M5 12h14",
+};
+const tileBase = [
+  "group relative rounded-[2rem] border-2 p-7 text-left transition duration-300",
+  "hover:-translate-y-[3px] hover:shadow-[0_24px_40px_-20px_rgba(120,60,10,0.25)] active:scale-[0.98]",
+  "motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand",
+].join(" ");
+const tileSkin: Record<GoalValue, string> = {
+  it_english: "border-transparent bg-stone-900 text-cream aria-pressed:ring-4 aria-pressed:ring-brand/50",
+  work_business: "border-stone-200 bg-cream aria-pressed:border-brand aria-pressed:bg-brand/10",
+  speaking: "border-stone-200 bg-cream aria-pressed:border-brand aria-pressed:bg-brand/10",
+  travel: "border-stone-200 bg-cream aria-pressed:border-brand aria-pressed:bg-brand/10",
+  everyday_life: "border-stone-200 bg-cream aria-pressed:border-brand aria-pressed:bg-brand/10",
+  other: "border-dashed border-stone-300 bg-white aria-pressed:border-solid aria-pressed:border-brand aria-pressed:bg-brand/10",
+};
+---
+
+<section id="goals" aria-labelledby="goals-heading" class="bg-white py-20 md:py-24" data-goal-picker>
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="flex items-end justify-between gap-6" data-reveal>
+      <div>
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.18em] text-stone-900"><span aria-hidden="true" class="mr-2 inline-block h-2 w-2 rounded-full bg-brand align-middle"></span>{PICKER.eyebrow}</p>
+        <h2 id="goals-heading" class="mt-2 font-display text-4xl font-bold tracking-tight md:text-5xl">{PICKER.title}</h2>
+        <p class="mt-3 max-w-[52ch] text-stone-600">{PICKER.subline}</p>
+      </div>
+      <div aria-hidden="true" class="relative hidden h-32 w-32 shrink-0 md:block">
+        <img data-mascot="thinking" src={MASCOTS.thinking.src} alt="" width={MASCOTS.thinking.width} height={MASCOTS.thinking.height} loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-contain" />
+        <img data-mascot="celebrate" hidden src={MASCOTS.celebrate.src} alt="" width={MASCOTS.celebrate.width} height={MASCOTS.celebrate.height} loading="eager" decoding="async" class="absolute inset-0 h-full w-full object-contain" />
+      </div>
+    </div>
+
+    <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" data-reveal>
+      {
+        PICKER.tiles.map((tile) => (
+          <button type="button" data-goal={tile.value} data-label={tile.label} aria-pressed="false" class:list={[tileBase, layout[tile.value], tileSkin[tile.value]]}>
+            <span aria-hidden="true" class="absolute right-5 top-5 grid h-8 w-8 scale-60 place-items-center rounded-full bg-brand text-stone-900 opacity-0 transition duration-300 motion-reduce:transition-none group-aria-pressed:scale-100 group-aria-pressed:opacity-100">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7" /></svg>
+            </span>
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f07c1a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d={icons[tile.value]} /></svg>
+            <span class:list={["mt-4 block font-display font-bold", tile.value === "it_english" ? "text-3xl" : "text-xl"]}>{tile.label}</span>
+            <span class:list={["mt-1 block", tile.value === "it_english" ? "max-w-[34ch] text-stone-300" : "text-sm text-stone-600"]}>{tile.line}</span>
+            {tile.chat && (
+              <span class="mt-8 block space-y-2 font-mono text-sm">
+                <span class="block w-fit rounded-xl bg-white/10 px-3 py-2">“{tile.chat[0]}”</span>
+                <span class="ml-8 block w-fit rounded-xl bg-brand px-3 py-2 text-stone-900">“{tile.chat[1]}”</span>
+              </span>
+            )}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div
+    data-goal-bar
+    class="invisible fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-2xl translate-y-[140%] flex-col items-stretch gap-3 rounded-3xl bg-stone-900 p-4 text-cream sm:flex-row sm:items-center sm:gap-4 sm:rounded-full sm:py-2.5 sm:pl-6 sm:pr-2.5 shadow-2xl transition duration-500 data-[open]:visible data-[open]:translate-y-0 motion-reduce:transition-none"
+  >
+    <p class="min-w-0 flex-1 line-clamp-2 text-sm sm:line-clamp-1">
+      <span class="text-stone-400">{PICKER.chosenLabel}</span> <span data-goal-chosen class="font-semibold"></span>
+    </p>
+    <div class="[&>a]:w-full [&>a]:justify-center sm:[&>a]:w-fit">
+      <BookTrialLink data-goal-book />
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-goal-picker]");
+  const bar = root?.querySelector<HTMLElement>("[data-goal-bar]");
+  const chosenOut = root?.querySelector<HTMLElement>("[data-goal-chosen]");
+  const book = root?.querySelector<HTMLAnchorElement>("[data-goal-book]");
+  const thinking = root?.querySelector<HTMLElement>('[data-mascot="thinking"]');
+  const celebrate = root?.querySelector<HTMLElement>('[data-mascot="celebrate"]');
+  if (root && bar && chosenOut && book && thinking && celebrate) {
+    const tiles = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-goal]"));
+    const chosen = new Set<string>();
+    // The bar is shown while goals are chosen and the page footer is not in view.
+    let footerInView = false;
+
+    const render = () => {
+      for (const tile of tiles) tile.setAttribute("aria-pressed", String(chosen.has(tile.dataset.goal ?? "")));
+      chosenOut.textContent = tiles
+        .filter((tile) => chosen.has(tile.dataset.goal ?? ""))
+        .map((tile) => tile.dataset.label)
+        .join(" · ");
+      bar.toggleAttribute("data-open", chosen.size > 0 && !footerInView);
+      thinking.hidden = chosen.size > 0;
+      celebrate.hidden = chosen.size === 0;
+    };
+
+    const footer = document.querySelector("footer");
+    if (footer) {
+      new IntersectionObserver((entries) => {
+        footerInView = entries[entries.length - 1].isIntersecting;
+        render();
+      }).observe(footer);
+    }
+
+    for (const tile of tiles) {
+      tile.addEventListener("click", () => {
+        const goal = tile.dataset.goal ?? "";
+        if (chosen.has(goal)) chosen.delete(goal);
+        else chosen.add(goal);
+        render();
+      });
+    }
+
+    book.addEventListener("click", () => {
+      const goals = [...chosen];
+      (window as Window & { __pendingTrialGoals?: string[] }).__pendingTrialGoals = goals;
+      window.dispatchEvent(new CustomEvent("trial:goals", { detail: { goals } }));
+    });
+  }
+</script>

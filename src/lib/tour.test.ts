@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES } from "./tour.ts";
+import { TOUR_FACTS, TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES } from "./tour.ts";
 import { findPromises } from "./copyRules.ts";
 import { readFileSync } from "node:fs";
 import { webpSize } from "./webp.ts";
@@ -23,6 +23,7 @@ test("no tour text makes a promise (AC-10)", () => {
   const texts = [
     TOUR_HEADING.title,
     TOUR_HEADING.subline,
+    ...TOUR_FACTS,
     TOUR_LABELS.previous,
     TOUR_LABELS.next,
     ...TOUR_SLIDES.flatMap((s) => [s.title, s.caption, s.alt]),
@@ -36,4 +37,9 @@ test("every slide image exists in public/ at the width and height the <img> decl
     const size = webpSize(new Uint8Array(readFileSync(file)));
     assert.deepEqual(size, { width: s.width, height: s.height }, s.image);
   }
+});
+
+test("the tour header carries three fact tags", () => {
+  assert.equal(TOUR_FACTS.length, 3);
+  for (const fact of TOUR_FACTS) assert.ok(fact.trim());
 });
