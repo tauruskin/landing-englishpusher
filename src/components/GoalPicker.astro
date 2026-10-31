@@ -27,7 +27,7 @@ const icons: Record<GoalValue, string> = {
 const tileBase = [
   "group relative rounded-[2rem] border-2 p-7 text-left transition duration-300",
   "hover:-translate-y-[3px] hover:shadow-[0_24px_40px_-20px_rgba(120,60,10,0.25)] active:scale-[0.98]",
-  "motion-reduce:transition-none focus:outline-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand",
+  "motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand",
 ].join(" ");
 const tileSkin: Record<GoalValue, string> = {
   it_english: "border-transparent bg-stone-900 text-cream aria-pressed:ring-4 aria-pressed:ring-brand/50",
@@ -79,7 +79,7 @@ const tileSkin: Record<GoalValue, string> = {
     data-goal-bar
     class="invisible fixed inset-x-4 bottom-4 z-40 mx-auto flex max-w-2xl translate-y-[140%] flex-col items-stretch gap-3 rounded-3xl bg-stone-900 p-4 text-cream sm:flex-row sm:items-center sm:gap-4 sm:rounded-full sm:py-2.5 sm:pl-6 sm:pr-2.5 shadow-2xl transition duration-500 data-[open]:visible data-[open]:translate-y-0 motion-reduce:transition-none"
   >
-    <p class="min-w-0 flex-1 line-clamp-2 text-sm sm:truncate">
+    <p class="min-w-0 flex-1 line-clamp-2 text-sm sm:line-clamp-1">
       <span class="text-stone-400">{PICKER.chosenLabel}</span> <span data-goal-chosen class="font-semibold"></span>
     </p>
     <div class="[&>a]:w-full [&>a]:justify-center sm:[&>a]:w-fit">
