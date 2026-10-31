@@ -42,20 +42,26 @@ date (and timestamps where asked) when done.
 
 ## 2. Before publishing
 
-- [ ] **Tetiana** — approve every visible string in writing: the page (Hero, InterimBlock, Footer),
+- [ ] **Tetiana** — approve every visible string in writing: the page (Hero, TourStrip, InterimBlock, Footer),
   the page title and description, the link preview (title, description, image), the form's
   headline and subline, the field error messages, the level and goal pills, the thank-you and the
   send-failed message. Check them against the banned list: no price, no "free", no lesson length,
   no learning result. The page's wording comes from `INTERIM_COPY` in
   [`src/lib/site.ts`](../../../src/lib/site.ts) and the section files in
-  [`src/components/`](../../../src/components/). The form's wording is in three files:
+  [`src/components/`](../../../src/components/). The form's wording is in three files, and the tour's in a fourth:
   - `FORM_COPY` in [`src/lib/formCopy.ts`](../../../src/lib/formCopy.ts): every string the form and
     its window write, including the screen-reader labels;
   - [`src/lib/validate.ts`](../../../src/lib/validate.ts): the field error messages ("Please enter
     your name" and the two email messages), the app's own wording;
-  - [`src/lib/options.ts`](../../../src/lib/options.ts): the level and goal pill labels.
+  - [`src/lib/options.ts`](../../../src/lib/options.ts): the level and goal pill labels;
+  - [`src/lib/tour.ts`](../../../src/lib/tour.ts): the "How it works" heading, subline, the five
+    slide titles and captions, their alt texts and the arrow labels.
 
   Proves AC-10.
+- [ ] **Operator** — tour screenshots in [`public/tour/`](../../../public/tour/): no real people,
+  no names, emails or account details, no coursebook material, and slide 2 is the real Moodle
+  screenshot, not the placeholder. Proves AC-10 and the tour spec's content rules
+  ([tour strip spec](../../superpowers/specs/2026-10-31-tour-strip-design.md)).
 - [ ] **Operator** — after any copy change: `npm run build && npm run test:built` passes (the
   automated AC-10 scan of the built page; CI runs it too). Proves AC-10.
 - [ ] **Operator** — local send: run `npm run build && npm run preview`, open
