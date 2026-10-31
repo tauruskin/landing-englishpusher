@@ -5,12 +5,12 @@ layer: "ui"
 deps: ["T13"]
 blocks: ["T17"]
 acs: ["AC-10"]
-files_hint: ["src/lib/formCopy.test.ts"]
+files_hint: ["src/lib/jsxText.ts", "src/lib/jsxText.test.ts", "src/lib/formCopy.test.ts"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 # T16 — Replace the regex guard in formCopy.test.ts with a TypeScript syntax-tree walk of TrialForm and TrialDialog
@@ -23,9 +23,9 @@ Review [review-2026-10-31-2.md](../_review/review-2026-10-31-2.md) N3. The regex
 
 ## Checklist
 
-- [ ] Walk the TSX syntax tree (typescript is a devDependency) instead of matching regexes.
-- [ ] Every bypass from the review is caught by a mutant check; the real components pass.
+- [x] Walk the TSX syntax tree (typescript is a devDependency) instead of matching regexes.
+- [x] Every bypass from the review is caught by a mutant check; the real components pass.
 
 ## Definition of Done
 
-- [ ] `npm test` green; each bypass mutant goes red.
+- [x] `npm test` green; each bypass mutant goes red.

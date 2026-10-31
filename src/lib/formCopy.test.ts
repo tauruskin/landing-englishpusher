@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import { findPromises } from "./copyRules.ts";
 import { FORM_COPY } from "./formCopy.ts";
 import { GOALS, LEVELS } from "./options.ts";
+import { hardCodedText } from "./jsxText.ts";
 
 // Every string leaf of the copy; a function (text with the visitor's name) is called with a sample.
 function texts(node: unknown, path = "FORM_COPY"): [string, string][] {
@@ -34,14 +35,6 @@ test("no string of the form copy or its pill labels makes a promise (AC-10)", ()
 });
 
 for (const file of ["TrialForm.tsx", "TrialDialog.tsx"]) test(`${file} writes no user-facing text outside FORM_COPY`, () => {
-  const source = readFileSync(new URL(`../components/trial-form/${file}`, import.meta.url), "utf8")
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/\/\/.*$/gm, "");
-  // A JSX text run sits between a tag or an expression and the next one; a run that reads like
-  // code (a statement, an assignment, a condition) is not text.
-  const jsxText = [...source.matchAll(/[>}]([^<>{}]*[A-Za-z][^<>{}]*)[<{]/g)]
-    .map((m) => m[1].trim())
-    .filter((run) => !/[;=]|&&|\|\||^:|^(?:return|catch|function|else|try|for|if|const|let)\b/.test(run));
-  const attrText = [...source.matchAll(/\b(?:alt|placeholder|aria-label|title|label|hint)="([^"]*[A-Za-z][^"]*)"/g)].map((m) => m[0]);
-  assert.deepEqual([...jsxText, ...attrText], []);
+  const source = readFileSync(new URL(`../components/trial-form/${file}`, import.meta.url), "utf8");
+  assert.deepEqual(hardCodedText(source), []);
 });

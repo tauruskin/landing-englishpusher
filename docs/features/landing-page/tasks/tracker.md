@@ -23,7 +23,7 @@
 | T13 | Form copy object + findPromises test (review F2) | ui | Oleksandr Pushkar (Operator) | S | T9 | done | COMMIT |
 | T14 | Checklist: Local UI pass for AC-01..04, 08, 09 (review F1) | docs | Oleksandr Pushkar (Operator) | S | T11, T13 | done | COMMIT |
 | T15 | Checklist: trap step via real key press, offline retry clause (review N1, N2) | docs | Oleksandr Pushkar (Operator) | S | T14 | done | COMMIT |
-| T16 | formCopy guard: TypeScript syntax-tree walk instead of regexes (review N3) | ui | Oleksandr Pushkar (Operator) | S | T13 | todo | — |
+| T16 | formCopy guard: TypeScript syntax-tree walk instead of regexes (review N3) | ui | Oleksandr Pushkar (Operator) | S | T13 | done | COMMIT |
 | T17 | Scan validation messages; approval names validate.ts + options.ts (review N4) | ui | Oleksandr Pushkar (Operator) | S | T15, T16 | todo | — |
 
 **Total:** 17 tasks, ~6.5 person-days (S ≈ 0.25 d, M ≈ 0.5–0.75 d).
