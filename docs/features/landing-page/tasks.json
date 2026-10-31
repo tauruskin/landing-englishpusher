@@ -285,6 +285,60 @@
       ],
       "file": "docs/features/landing-page/tasks/t14-checklist-ui-pass.md",
       "status": "done"
+    },
+    {
+      "id": "T15",
+      "title": "Release checklist: a trap-field step that fires React's onChange, and the retry clause of the offline row",
+      "layer": "docs",
+      "deps": [
+        "T14"
+      ],
+      "acs": [
+        "AC-05",
+        "AC-08"
+      ],
+      "dod": "release-checklist.md: the AC-08 trap step focuses company_url from the console and types a real key before sending; the offline-failure row adds 'press Send again while offline: one more trial_form_error (network), still no generate_lead'; links resolve.",
+      "files_hint": [
+        "docs/features/landing-page/release-checklist.md"
+      ],
+      "file": "docs/features/landing-page/tasks/t15-checklist-trap-retry.md",
+      "status": "todo"
+    },
+    {
+      "id": "T16",
+      "title": "Replace the regex guard in formCopy.test.ts with a TypeScript syntax-tree walk of TrialForm and TrialDialog",
+      "layer": "ui",
+      "deps": [
+        "T13"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "formCopy.test.ts parses each component with the typescript compiler API and fails on: JSX text with a letter; a string or template literal with a letter inside a JSX child expression (incl. ternaries / &&); any string in a text-bearing attribute (alt, title, placeholder, label, hint, aria-label/description/roledescription/valuetext/placeholder) in either quote form; a module-level string constant used in those places. Each bypass from the review goes red against a mutant; both components pass; npm test green.",
+      "files_hint": [
+        "src/lib/formCopy.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t16-form-copy-guard.md",
+      "status": "todo"
+    },
+    {
+      "id": "T17",
+      "title": "Scan the validation messages for promises and name validate.ts and options.ts in the AC-10 approval pointer",
+      "layer": "ui",
+      "deps": [
+        "T15",
+        "T16"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "formCopy.test.ts runs findPromises over every message validateTrialForm can return (empty form, invalid email); the test header and release-checklist.md's Tetiana approval item name validate.ts (error messages) and options.ts (pill labels) alongside FORM_COPY; npm test green.",
+      "files_hint": [
+        "src/lib/formCopy.test.ts",
+        "docs/features/landing-page/release-checklist.md"
+      ],
+      "file": "docs/features/landing-page/tasks/t17-validation-copy.md",
+      "status": "todo"
     }
   ]
 }
