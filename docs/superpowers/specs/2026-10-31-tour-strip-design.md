@@ -31,8 +31,7 @@ only a scrollbar).
 The section is placed between `Hero` and `InterimBlock` in `src/pages/index.astro`.
 
 - Heading: **How it works**. Subline: *From your first message to practice between lessons.*
-- Each card is a white rounded card holding a phone-framed screenshot, the step number in brand
-  orange, a title and one line of caption.
+- Each card is a white rounded card holding a phone-framed screenshot, the step number in an orange disc, a title and one line of caption.
 
 | # | Title | Caption (draft, Tetiana approves) | Screenshot |
 |---|---|---|---|
@@ -82,13 +81,15 @@ export const TOUR_SLIDES: readonly TourSlide[];
 ### `src/components/TourStrip.astro`
 
 - The markup is a `<section aria-labelledby>` containing the `<h2>`, the subline, and the
-  scrolling container: an `<ol>` with one `<li>` per slide.
-- Each card shows the phone frame (a CSS border and radius around the `<img>`), the step number,
-  the title and the caption.
-- Each image sets `width`/`height` to avoid layout shift. Slide 1 loads eagerly. Slides 2–5 use
-  `loading="lazy"` and `decoding="async"`.
+  scrolling container: an `<ol role="list" aria-labelledby="tour-heading">` (the explicit role keeps list semantics in
+  Safari, since preflight removes list-style) with one `<li>` per slide.
+- Each card shows the phone frame (a CSS border and radius around the `<img>`), the step number
+  in an orange disc with dark text (orange text on white fails contrast), the title and the caption.
+- Each image sets `width`/`height` to avoid layout shift. All images use `loading="lazy"` (the strip sits below the hero) and
+  `decoding="async"`.
 - Scrolling uses Tailwind utilities: `overflow-x-auto snap-x snap-mandatory`, each card
-  `snap-start shrink-0 basis-[80%] sm:basis-[calc((100%-2rem)/3)]`. The scrollbar is hidden
+  `snap-start shrink-0 basis-[80%] sm:basis-[calc((100%-2rem)/3)]`. The strip bleeds to the column edge (`-mx-6 px-6 scroll-px-6`) so the peeking card is not
+  clipped. The scrollbar is hidden
   visually, and the container keeps `tabindex="0"` with a visible focus ring so the keyboard
   arrow keys scroll it.
 - The inline `<script>`, about 15 lines with no framework, is progressive:
@@ -97,7 +98,8 @@ export const TOUR_SLIDES: readonly TourSlide[];
   - on `scroll` it updates the current dot and disables a button at either end.
   - Without the script, swiping and scrolling still work and the buttons stay hidden.
 - **Accessibility:**
-  - Each `<li>` has `aria-label="Step N of 5: <title>"`.
+  - The list announces position itself; the `<li>`s carry no `aria-label`.
+  - Focus rings use `focus:outline-hidden` plus `focus-visible:ring`, so they survive forced-colors.
   - The buttons are `<button type="button">` labelled "Previous slide" / "Next slide".
   - The dots are decorative (`aria-hidden`).
   - With `prefers-reduced-motion: reduce`, scrolling is instant (`behavior: "auto"`).

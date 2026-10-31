@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES, stepLabel } from "./tour.ts";
+import { TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES } from "./tour.ts";
 import { findPromises } from "./copyRules.ts";
 import { readFileSync } from "node:fs";
 import { webpSize } from "./webp.ts";
@@ -25,13 +25,9 @@ test("no tour text makes a promise (AC-10)", () => {
     TOUR_HEADING.subline,
     TOUR_LABELS.previous,
     TOUR_LABELS.next,
-    ...TOUR_SLIDES.flatMap((s) => [s.title, s.caption, s.alt, stepLabel(s)]),
+    ...TOUR_SLIDES.flatMap((s) => [s.title, s.caption, s.alt]),
   ];
   for (const text of texts) assert.deepEqual(findPromises(text), [], text);
-});
-
-test("the step label names the position and the title, for screen readers", () => {
-  assert.equal(stepLabel(TOUR_SLIDES[1]), "Step 2 of 5: Your course space");
 });
 
 test("every slide image exists in public/ at the width and height the <img> declares", () => {

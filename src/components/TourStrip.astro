@@ -2,12 +2,12 @@
 // "How it works" tour (spec docs/superpowers/specs/2026-10-31-tour-strip-design.md): a CSS
 // scroll-snap strip of phone-framed screenshots. Swiping and scrolling work with no JS. The
 // inline script below only adds the desktop arrows and the dots. All text comes from tour.ts.
-import { TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES, stepLabel } from "../lib/tour.ts";
+import { TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES } from "../lib/tour.ts";
 
 const arrowClass = [
-  "flex h-9 w-9 items-center justify-center rounded-full bg-white text-lg text-brand shadow-sm",
+  "flex h-9 w-9 items-center justify-center rounded-full bg-white text-lg text-neutral-900 shadow-sm",
   "transition-opacity hover:bg-cream disabled:cursor-default disabled:opacity-40",
-  "focus:outline-none focus-visible:ring-2 focus-visible:ring-brand",
+  "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand",
 ].join(" ");
 ---
 
@@ -31,18 +31,18 @@ const arrowClass = [
 
   <ol
     tabindex="0"
-    aria-label={TOUR_HEADING.title}
+    role="list"
+    aria-labelledby="tour-heading"
     data-tour-track
     class={[
-      "mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 motion-reduce:scroll-auto",
+      "-mx-6 mt-6 flex scroll-px-6 snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-2 motion-reduce:scroll-auto",
       "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-      "rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand",
+      "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand",
     ].join(" ")}
   >
     {
-      TOUR_SLIDES.map((slide, i) => (
+      TOUR_SLIDES.map((slide) => (
         <li
-          aria-label={stepLabel(slide)}
           class="shrink-0 basis-[80%] snap-start rounded-3xl bg-white p-4 shadow-sm sm:basis-[calc((100%-2rem)/3)]"
         >
           <div class="mx-auto w-40 overflow-hidden rounded-[1.75rem] border-[6px] border-neutral-900 bg-white sm:w-36">
@@ -51,13 +51,13 @@ const arrowClass = [
               alt={slide.alt}
               width={slide.width}
               height={slide.height}
-              loading={i === 0 ? "eager" : "lazy"}
+              loading="lazy"
               decoding="async"
               class="block h-auto w-full"
             />
           </div>
           <p class="mt-4 font-display text-base font-semibold text-neutral-900">
-            <span class="text-brand">{slide.step}</span> · {slide.title}
+            <span class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-brand text-sm font-bold text-neutral-900">{slide.step}</span>{slide.title}
           </p>
           <p class="mt-1 text-sm text-neutral-600">{slide.caption}</p>
         </li>

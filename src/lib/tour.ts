@@ -72,7 +72,3 @@ export const TOUR_SLIDES: readonly TourSlide[] = [
     height: H,
   },
 ];
-
-export function stepLabel(slide: TourSlide): string {
-  return `Step ${slide.step} of ${TOUR_SLIDES.length}: ${slide.title}`;
-}
