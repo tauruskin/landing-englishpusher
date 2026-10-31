@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES, stepLabel } from "./tour.ts";
 import { findPromises } from "./copyRules.ts";
+import { readFileSync } from "node:fs";
+import { webpSize } from "./webp.ts";
 
 test("five slides, numbered 1 to 5 in display order", () => {
   assert.deepEqual(TOUR_SLIDES.map((s) => s.step), [1, 2, 3, 4, 5]);
@@ -13,6 +15,7 @@ test("every slide has a title, a caption, alt text and an image under /tour/", (
     assert.ok(s.caption.trim(), `step ${s.step}: caption`);
     assert.ok(s.alt.trim(), `step ${s.step}: alt`);
     assert.match(s.image, /^\/tour\/\d-[a-z]+\.webp$/, `step ${s.step}: image path`);
+    assert.ok(s.image.startsWith(`/tour/${s.step}-`), `step ${s.step}: image number matches step`);
   }
 });
 
@@ -28,5 +31,13 @@ test("no tour text makes a promise (AC-10)", () => {
 });
 
 test("the step label names the position and the title, for screen readers", () => {
-  assert.equal(stepLabel(TOUR_SLIDES[1]), `Step 2 of 5: ${TOUR_SLIDES[1].title}`);
+  assert.equal(stepLabel(TOUR_SLIDES[1]), "Step 2 of 5: Your course space");
+});
+
+test("every slide image exists in public/ at the width and height the <img> declares", () => {
+  for (const s of TOUR_SLIDES) {
+    const file = new URL(`../../public${s.image}`, import.meta.url);
+    const size = webpSize(new Uint8Array(readFileSync(file)));
+    assert.deepEqual(size, { width: s.width, height: s.height }, s.image);
+  }
 });
