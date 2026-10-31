@@ -5,6 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { findPromises } from "../src/lib/copyRules.ts";
+import { MARQUEE } from "../src/lib/landingCopy.ts";
 import { INSTAGRAM_URL, LINKEDIN_URL } from "../src/lib/options.ts";
 
 const html = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
@@ -48,8 +49,12 @@ test("the footer links Tetiana's Instagram and LinkedIn in a new tab", () => {
   }
 });
 
-test("the marquee's second copy is hidden from screen readers", () => {
+test("the marquee reads each course once; the repeats are hidden", () => {
   const copies = [...html.matchAll(/<div\b[^>]*data-marquee-copy[^>]*>/g)].map((m) => m[0]);
-  assert.equal(copies.length, 2);
-  assert.equal(copies.filter((tag) => /aria-hidden="true"/.test(tag)).length, 1);
+  assert.ok(copies.length >= 2 && copies.length % 2 === 0, "an even number of copies keeps the -50% loop seamless");
+  assert.equal(copies.filter((tag) => !/aria-hidden="true"/.test(tag)).length, 1);
+  const visible = [...html.matchAll(/<div\b(?![^>]*aria-hidden)[^>]*data-marquee-copy[^>]*>([^]*?)<\/div>/g)];
+  assert.equal(visible.length, 1);
+  const names = [...visible[0][1].matchAll(/<span>([^<]*)<\/span>/g)].map((m) => decode(m[1]));
+  assert.deepEqual(names, [...MARQUEE]);
 });

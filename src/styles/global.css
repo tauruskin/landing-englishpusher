@@ -8,7 +8,7 @@
   --font-body: "Inter", sans-serif;
 
   /* Redesign motion (spec "Motion"): only transform/opacity, all stopped by motion-reduce:animate-none. */
-  --animate-marquee: marquee 40s linear infinite;
+  --animate-marquee: marquee 60s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
   --animate-spin-slow: spin 40s linear infinite;
 
