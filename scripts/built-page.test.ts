@@ -83,3 +83,13 @@ test("the tour starts in its no-JS state: arrows hidden, a focusable strip of fi
   assert.equal(items.length, 5);
   assert.equal(items.filter((tag) => /\sdata-reached/.test(tag)).length, 1);
 });
+
+test("there is exactly one footer and it comes after </main> (the goals bar watches it)", () => {
+  assert.equal([...html.matchAll(/<footer[\s>]/g)].length, 1);
+  assert.ok(html.indexOf("<footer") > html.indexOf("</main>"));
+});
+
+test("the Meet Tetiana ring path has one id and the text points at it", () => {
+  assert.equal([...html.matchAll(/id="meet-ring"/g)].length, 1);
+  assert.match(html, /href="#meet-ring"/);
+});

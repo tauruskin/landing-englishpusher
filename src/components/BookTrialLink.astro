@@ -11,8 +11,8 @@ interface Props {
 const { variant = "brand", size = "md", ...rest } = Astro.props;
 const copy = { label: "Book a trial lesson" };
 const colours = {
-  brand: "bg-brand text-stone-900 shadow-[0_12px_24px_-12px_rgba(240,124,26,0.8)]",
-  dark: "bg-stone-900 text-cream",
+  brand: "bg-brand text-stone-900 shadow-[0_12px_24px_-12px_rgba(240,124,26,0.8)] focus-visible:ring-brand",
+  dark: "bg-stone-900 text-cream focus-visible:ring-stone-900",
 }[variant];
 const sizing = { md: "px-5 py-2.5 text-sm", lg: "px-6 py-3.5 text-base" }[size];
 ---
@@ -24,7 +24,7 @@ const sizing = { md: "px-5 py-2.5 text-sm", lg: "px-6 py-3.5 text-base" }[size];
   class:list={[
     "inline-flex w-fit shrink-0 items-center gap-2 rounded-full font-semibold transition",
     "hover:-translate-y-0.5 active:scale-[0.98] motion-reduce:transition-none",
-    "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
+    "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2",
     colours,
     sizing,
   ]}
