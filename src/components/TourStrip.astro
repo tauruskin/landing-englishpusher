@@ -2,8 +2,8 @@
 // "How it works" tour (tour spec + redesign spec, Page 4): a CSS scroll-snap strip of
 // phone-framed screenshots. Swiping and scrolling work with no JS. The inline script is
 // progressive enhancement: it reveals the arrows (scroll by one card) and marks a step "reached"
-// when its card is fully in view or lies to the left of the view; reached steps turn the
-// numbered progress line orange. All text comes from tour.ts.
+// when its card's right edge is within the track's view (so cards scrolled past on the left count
+// too); reached steps turn the numbered progress line orange. All text comes from tour.ts.
 import { TOUR_FACTS, TOUR_HEADING, TOUR_LABELS, TOUR_SLIDES } from "../lib/tour.ts";
 
 const arrowBase =
@@ -23,7 +23,7 @@ const arrowBase =
         </ul>
       </div>
       <div class="hidden gap-2 md:flex" data-tour-nav hidden>
-        <button type="button" class={`${arrowBase} bg-white text-stone-900`} aria-label={TOUR_LABELS.previous} data-tour-prev>
+        <button type="button" class={`${arrowBase} bg-white text-stone-900 ring-1 ring-stone-200`} aria-label={TOUR_LABELS.previous} data-tour-prev>
           <span aria-hidden="true">‹</span>
         </button>
         <button type="button" class={`${arrowBase} bg-stone-900 text-cream`} aria-label={TOUR_LABELS.next} data-tour-next>
@@ -47,10 +47,10 @@ const arrowBase =
         TOUR_SLIDES.map((slide, i) => (
           <li class="group shrink-0 basis-[80%] snap-start sm:basis-[calc((100%-3rem)/3)]" data-reached={i === 0 ? "" : undefined}>
             <div aria-hidden="true" class="flex items-center gap-3">
-              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white font-display font-bold text-stone-500 transition-colors group-data-[reached]:bg-brand group-data-[reached]:text-stone-900">
+              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white font-display font-bold text-stone-500 motion-reduce:transition-none transition-colors group-data-[reached]:bg-brand group-data-[reached]:text-stone-900">
                 {slide.step}
               </span>
-              <span class="h-0.5 flex-1 bg-stone-200 transition-colors group-data-[reached]:bg-brand" />
+              <span class="h-0.5 flex-1 bg-stone-200 motion-reduce:transition-none transition-colors group-data-[reached]:bg-brand" />
             </div>
             <div class="mt-6 rounded-[2rem] bg-white p-5 shadow-[0_20px_40px_-24px_rgba(120,60,10,0.3)]">
               <div class="mx-auto w-44 overflow-hidden rounded-[1.9rem] border-[7px] border-stone-900 bg-white">
@@ -79,14 +79,19 @@ const arrowBase =
     const cardStep = () => cards[0].offsetWidth + (parseFloat(getComputedStyle(track).columnGap) || 0);
     const maxScroll = () => track.scrollWidth - track.clientWidth;
 
+    // A disabled button drops keyboard focus, so hand it to the other arrow first.
+    const setDisabled = (btn: HTMLButtonElement, other: HTMLButtonElement, off: boolean) => {
+      if (off && document.activeElement === btn) other.focus({ preventScroll: true });
+      btn.disabled = off;
+    };
     const update = () => {
       const view = track.getBoundingClientRect();
       for (const card of cards) {
         const box = card.getBoundingClientRect();
         card.toggleAttribute("data-reached", box.right <= view.right + 1);
       }
-      prev.disabled = track.scrollLeft <= 1;
-      next.disabled = track.scrollLeft >= maxScroll() - 1;
+      setDisabled(prev, next, track.scrollLeft <= 1);
+      setDisabled(next, prev, track.scrollLeft >= maxScroll() - 1);
     };
     const go = (direction: number) =>
       track.scrollBy({

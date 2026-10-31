@@ -72,3 +72,14 @@ test("the marquee reads each course once; the repeats are hidden", () => {
   const names = [...visible[0][1].matchAll(/<span>([^<]*)<\/span>/g)].map((m) => decode(m[1]));
   assert.deepEqual(names, [...MARQUEE]);
 });
+
+test("the tour starts in its no-JS state: arrows hidden, a focusable strip of five steps, step 1 reached", () => {
+  const nav = html.match(/<div\b[^>]*data-tour-nav[^>]*>/)?.[0];
+  assert.ok(nav && /\shidden(?=[\s>=])/.test(nav), "arrows are hidden until the script runs");
+  const track = html.match(/<ol\b[^>]*data-tour-track[^>]*>([^]*?)<\/ol>/);
+  assert.ok(track, "the tour strip exists");
+  assert.match(track[0].match(/<ol\b[^>]*>/)![0], /tabindex="0"/);
+  const items = [...track[1].matchAll(/<li\b[^>]*>/g)].map((m) => m[0]);
+  assert.equal(items.length, 5);
+  assert.equal(items.filter((tag) => /\sdata-reached/.test(tag)).length, 1);
+});
