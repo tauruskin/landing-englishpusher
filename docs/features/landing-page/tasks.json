@@ -359,6 +359,24 @@
       ],
       "file": "docs/features/landing-page/tasks/t18-jsx-guard-hardening.md",
       "status": "done"
+    },
+    {
+      "id": "T19",
+      "title": "Follow calls to local helper functions in the jsxText guard",
+      "layer": "ui",
+      "deps": [
+        "T18"
+      ],
+      "acs": [
+        "AC-10"
+      ],
+      "dod": "When a rendered call's callee is an identifier, jsxText.ts checks what its local arrow / function-expression initializers and same-named function declarations return, under the cycle guard. jsxText.test.ts: caught cases for an arrow helper and a function declaration, an ignored pillClass-style helper used only in className; both real components pass; npm test + tsc green.",
+      "files_hint": [
+        "src/lib/jsxText.ts",
+        "src/lib/jsxText.test.ts"
+      ],
+      "file": "docs/features/landing-page/tasks/t19-jsx-guard-helpers.md",
+      "status": "todo"
     }
   ]
 }
