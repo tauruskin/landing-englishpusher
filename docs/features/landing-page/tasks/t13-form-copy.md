@@ -9,8 +9,8 @@ files_hint: ["src/lib/formCopy.ts", "src/lib/formCopy.test.ts", "src/components/
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 # T13 — Move the form's user-facing strings into one exported copy object and check it with findPromises
@@ -27,10 +27,10 @@ step: "—"
 
 ## Checklist
 
-- [ ] `src/lib/formCopy.ts` exports `FORM_COPY`: every visible string of `TrialForm.tsx` (headline, subline, field labels, hints, placeholders, legends, submit, thank-you heading parts + line, Close, send-failed banner parts, avatar alt).
-- [ ] `TrialForm.tsx` renders those strings only from `FORM_COPY` — no user-facing literal stays in the component.
-- [ ] `src/lib/formCopy.test.ts`: `findPromises` over every string in `FORM_COPY` and every `GOALS` / `LEVELS` label returns `[]`.
+- [x] `src/lib/formCopy.ts` exports `FORM_COPY`: every visible string of `TrialForm.tsx` (headline, subline, field labels, hints, placeholders, legends, submit, thank-you heading parts + line, Close, send-failed banner parts, avatar alt).
+- [x] `TrialForm.tsx` renders those strings only from `FORM_COPY` — no user-facing literal stays in the component.
+- [x] `src/lib/formCopy.test.ts`: `findPromises` over every string in `FORM_COPY` and every `GOALS` / `LEVELS` label returns `[]`.
 
 ## Definition of Done
 
-- [ ] `npm test` green; `tsc --noEmit` clean; rendered text unchanged.
+- [x] `npm test` green; `tsc --noEmit` clean; rendered text unchanged.

@@ -4,6 +4,7 @@
 // Send follows planSend() from src/lib/trialSend.ts, and the send goes to the live form only on the
 // published host (formIdFor) with the entry address as pageUri. What a result shows and records
 // comes from outcomeOf(): the send-failed banner also links LinkedIn and records trial_form_error.
+// Every visible string comes from FORM_COPY (src/lib/formCopy.ts), which is checked for AC-10.
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import confetti from "canvas-confetti";
 import { Loader2 } from "lucide-react";
@@ -13,6 +14,7 @@ import type { TrialFormErrors } from "../../lib/validate.ts";
 import { readEntryAddress, readHutk, submitTrialForm, type SubmitResult } from "../../lib/hubspot.ts";
 import { PORTAL_ID, formIdFor } from "../../lib/site.ts";
 import { outcomeOf, planSend } from "../../lib/trialSend.ts";
+import { FORM_COPY } from "../../lib/formCopy.ts";
 
 // ---------------------------------------------------------------------------
 // TrialForm — the "Book a trial lesson" form inside the TrialDialog window.
@@ -148,15 +150,15 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
           tabIndex={-1}
           className="break-words font-display text-2xl font-bold text-neutral-900 outline-none"
         >
-          Thank you, {values.firstname.trim()}! 🎉
+          {FORM_COPY.thankYou.heading(values.firstname.trim())}
         </h2>
-        <p className="text-[15px] text-neutral-600">I'll contact you soon.</p>
+        <p className="text-[15px] text-neutral-600">{FORM_COPY.thankYou.line}</p>
         <button
           type="button"
           onClick={onClose}
           className="mt-2 rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand/90"
         >
-          Close
+          {FORM_COPY.thankYou.close}
         </button>
       </div>
     );
@@ -168,20 +170,20 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
       <div className="flex flex-col items-center pt-12 text-center">
         <img
           src="/teacher-trial.png"
-          alt="Tutor Tetiana waving"
+          alt={FORM_COPY.avatarAlt}
           className="pointer-events-none absolute -top-14 left-1/2 h-28 w-auto -translate-x-1/2 select-none drop-shadow-md"
           draggable={false}
         />
         <h2 className="font-display text-2xl font-bold leading-tight text-neutral-900">
-          Book a trial lesson with Tetiana
+          {FORM_COPY.headline}
         </h2>
         <p className="mt-1.5 text-[15px] text-neutral-600">
-          Tell me a little about yourself and I'll get back to you soon.
+          {FORM_COPY.subline}
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="First name" htmlFor="tf-firstname" required error={errors.firstname}>
+        <Field label={FORM_COPY.fields.firstname} htmlFor="tf-firstname" required error={errors.firstname}>
           <input
             id="tf-firstname"
             name="firstname"
@@ -195,7 +197,7 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
             className={inputClass}
           />
         </Field>
-        <Field label="Email" htmlFor="tf-email" required error={errors.email}>
+        <Field label={FORM_COPY.fields.email} htmlFor="tf-email" required error={errors.email}>
           <input
             id="tf-email"
             name="email"
@@ -214,7 +216,7 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
       </div>
 
       <fieldset className="flex flex-col gap-2">
-        <legend className={labelClass}>Your English level</legend>
+        <legend className={labelClass}>{FORM_COPY.fields.level}</legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {LEVELS.map((level) => {
             const active = values.level === level.value;
@@ -235,7 +237,7 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
 
       <fieldset className="flex flex-col gap-2">
         <legend className={labelClass}>
-          What's your goal? <span className="font-normal text-neutral-400">(choose any)</span>
+          {FORM_COPY.fields.goals} <span className="font-normal text-neutral-400">{FORM_COPY.fields.goalsHint}</span>
         </legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {GOALS.map((goal) => {
@@ -255,26 +257,26 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
         </div>
       </fieldset>
 
-      <Field label="Telegram, Viber or phone" htmlFor="tf-messenger" hint="(optional)">
+      <Field label={FORM_COPY.fields.messenger} htmlFor="tf-messenger" hint={FORM_COPY.fields.optionalHint}>
         <input
           id="tf-messenger"
           name="messenger"
           autoComplete="off"
           maxLength={100}
-          placeholder="@username or +380…"
+          placeholder={FORM_COPY.fields.messengerPlaceholder}
           value={values.messenger}
           onChange={(e) => set("messenger", e.target.value)}
           className={inputClass}
         />
       </Field>
 
-      <Field label="Message" htmlFor="tf-message" hint="(optional)">
+      <Field label={FORM_COPY.fields.message} htmlFor="tf-message" hint={FORM_COPY.fields.optionalHint}>
         <textarea
           id="tf-message"
           name="message"
           rows={3}
           maxLength={2000}
-          placeholder="Anything I should know? Preferred time, topics…"
+          placeholder={FORM_COPY.fields.messagePlaceholder}
           value={values.message}
           onChange={(e) => set("message", e.target.value)}
           className={`${inputClass} resize-none`}
@@ -284,7 +286,7 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
       {/* Honeypot: hidden from people, bots fill it in */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
         <label>
-          Website
+          {FORM_COPY.fields.trap}
           <input
             name="company_url"
             tabIndex={-1}
@@ -297,15 +299,15 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
 
       {status === "error" && (
         <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-          Sorry, your request did not go through. Please try again or write to me on{" "}
+          {FORM_COPY.sendFailed.before}{" "}
           <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
-            Instagram
+            {FORM_COPY.sendFailed.instagram}
           </a>{" "}
-          or{" "}
+          {FORM_COPY.sendFailed.or}{" "}
           <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
-            LinkedIn
+            {FORM_COPY.sendFailed.linkedin}
           </a>
-          .
+          {FORM_COPY.sendFailed.after}
         </p>
       )}
 
@@ -320,7 +322,7 @@ export default function TrialForm({ values, onChange, onClose, onSent }: TrialFo
         ].join(" ")}
       >
         {status === "sending" && <Loader2 size={18} className="animate-spin" />}
-        Book a trial lesson
+        {FORM_COPY.submit}
       </button>
     </form>
   );

@@ -20,7 +20,7 @@
 | T10 | TrialDialog + client:idle mount | ui | Oleksandr Pushkar (Operator) | M | T4, T7, T9 | done | COMMIT |
 | T11 | Release checklist | docs | Oleksandr Pushkar (Operator) | S | T6, T10 | done | COMMIT |
 | T12 | hubspot edge tests: answer at 14,999 ms, body never changes result (review F3) | domain | Oleksandr Pushkar (Operator) | S | T3 | done | COMMIT |
-| T13 | Form copy object + findPromises test (review F2) | ui | Oleksandr Pushkar (Operator) | S | T9 | todo | — |
+| T13 | Form copy object + findPromises test (review F2) | ui | Oleksandr Pushkar (Operator) | S | T9 | done | COMMIT |
 | T14 | Checklist: Local UI pass for AC-01..04, 08, 09 (review F1) | docs | Oleksandr Pushkar (Operator) | S | T11, T13 | todo | — |
 
 **Total:** 14 tasks, ~5.75 person-days (S ≈ 0.25 d, M ≈ 0.5–0.75 d).

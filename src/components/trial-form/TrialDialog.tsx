@@ -10,6 +10,7 @@ import { X } from "lucide-react";
 import TrialForm from "./TrialForm.tsx";
 import { EMPTY_VALUES, type TrialFormValues } from "../../lib/options.ts";
 import { pushEvent } from "../../lib/events.ts";
+import { FORM_COPY } from "../../lib/formCopy.ts";
 import {
   CLOSED,
   TRIAL_HASH,
@@ -152,7 +153,7 @@ export default function TrialDialog() {
       className={`fixed inset-0 z-50 overflow-y-auto bg-black/50 ${open ? "block" : "hidden"}`}
       role="dialog"
       aria-modal="true"
-      aria-label="Book a trial lesson"
+      aria-label={FORM_COPY.dialog.label}
     >
       <div
         className="flex min-h-full items-center justify-center px-4 pb-6 pt-20"
@@ -171,7 +172,7 @@ export default function TrialDialog() {
           <button
             type="button"
             onClick={closeWindow}
-            aria-label="Close"
+            aria-label={FORM_COPY.dialog.close}
             className="absolute right-3 top-3 z-10 rounded-full p-1.5 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800"
           >
             <X size={20} />
