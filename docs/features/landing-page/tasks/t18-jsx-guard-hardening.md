@@ -9,8 +9,8 @@ files_hint: ["src/lib/jsxText.ts", "src/lib/jsxText.test.ts"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 # T18 — Harden the jsxText guard: Field's error prop, constants in any scope, non-ASCII text and HTML entities
@@ -25,10 +25,10 @@ harmless entity-only text such as `&nbsp;`.
 
 ## Checklist
 
-- [ ] `error` is a text prop.
-- [ ] `const` / `let` in every scope resolve; the initializer is checked as a rendered value; `{T.a}` resolves an object-literal field.
-- [ ] Text counts by `\p{L}`, `\p{N}`, `\p{Sc}` after stripping HTML entities.
+- [x] `error` is a text prop.
+- [x] `const` / `let` in every scope resolve; the initializer is checked as a rendered value; `{T.a}` resolves an object-literal field.
+- [x] Text counts by `\p{L}`, `\p{N}`, `\p{Sc}` after stripping HTML entities.
 
 ## Definition of Done
 
-- [ ] New caught and ignored cases in `jsxText.test.ts`; both components pass; `npm test` + `tsc` green.
+- [x] New caught and ignored cases in `jsxText.test.ts`; both components pass; `npm test` + `tsc` green.

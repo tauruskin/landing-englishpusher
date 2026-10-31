@@ -25,6 +25,6 @@
 | T15 | Checklist: trap step via native value setter + input event, offline retry clause (review N1, N2) | docs | Oleksandr Pushkar (Operator) | S | T14 | done | COMMIT |
 | T16 | formCopy guard: TypeScript syntax-tree walk instead of regexes (review N3) | ui | Oleksandr Pushkar (Operator) | S | T13 | done | COMMIT |
 | T17 | Scan validation messages; approval names validate.ts + options.ts (review N4) | ui | Oleksandr Pushkar (Operator) | S | T15, T16 | done | COMMIT |
-| T18 | jsxText guard: error prop, constants in any scope, non-ASCII text, entities (review P1–P3) | ui | Oleksandr Pushkar (Operator) | S | T16 | todo | — |
+| T18 | jsxText guard: error prop, constants in any scope, non-ASCII text, entities (review P1–P3) | ui | Oleksandr Pushkar (Operator) | S | T16 | done | COMMIT |
 
 **Total:** 18 tasks, ~6.75 person-days (S ≈ 0.25 d, M ≈ 0.5–0.75 d).

@@ -29,7 +29,37 @@ const caught: [string, string, string?][] = [
   ["a component's hint prop as a ternary", '<Field hint={on ? "optional" : ""} />'],
   ["a module constant rendered as a child", "<p>{PROMO}</p>", 'const PROMO = "Free 30 minute lesson";'],
   ["a module constant as alt", "<img alt={PROMO} />", "const PROMO = `Tetiana`;"],
+  ["a component's error prop", '<Field error="Free lesson" />'],
+  ["a component's error prop as a ternary", '<Field error={on ? "Free lesson" : undefined} />'],
+  ["a bare price with no letter", "<p>₴500</p>"],
+  ["a price in braces", '<p>{"500 ₴"}</p>'],
+  ["a Cyrillic word", "<p>Безкоштовно</p>"],
+  ["a module let", "<p>{PROMO}</p>", 'let PROMO = "Free lesson";'],
+  ["a module constant with a ternary", "<p>{PROMO}</p>", 'const PROMO = Math.random() > 1 ? "Free lesson" : "";'],
+  ["a field of a module object constant", "<p>{T.promo}</p>", 'const T = { promo: "Free lesson" };'],
 ];
+
+// A constant declared inside the component, before it returns its JSX.
+const inside = (decl: string, jsx: string) =>
+  `export default function C({ on }: { on: boolean }) {
+  ${decl}
+  return (
+    ${jsx}
+  );
+}
+`;
+
+const caughtInside: [string, string, string][] = [
+  ["a constant inside the component", 'const promo = "Free lesson";', "<p>{promo}</p>"],
+  ["a ternary constant inside the component", 'const cta = on ? "Try again" : COPY.submit;', "<button>{cta}</button>"],
+  ["a template constant inside the component", "const line = `Free ${1} lesson`;", '<img alt={line} />'],
+];
+
+for (const [name, decl, jsx] of caughtInside) {
+  test(`catches ${name}`, () => {
+    assert.notDeepEqual(hardCodedText(inside(decl, jsx)), [], decl);
+  });
+}
 
 for (const [name, jsx, before] of caught) {
   test(`catches ${name}`, () => {
@@ -48,6 +78,9 @@ const ignored: [string, string, string?][] = [
   ["a filter argument inside a child", '<ul>{xs.filter((x) => x === "goal").map((x) => <li key={x}>{x}</li>)}</ul>'],
   ["a class-list constant", '<p className={labelClass}>{COPY.line}</p>', 'const labelClass = "text-sm font-semibold";'],
   ["comments", "<p>{/* Header: the avatar sticks out */}{COPY.line}</p>"],
+  ["entity-only text", "<span>&nbsp;</span><b>&times;</b>"],
+  ["a local class constant", "<p className={cls}>{COPY.line}</p>", 'const cls = on ? "text-brand" : "text-neutral-600";'],
+  ["a local copy alias", "<p>{line}</p>", "const line = COPY.line;"],
 ];
 
 for (const [name, jsx, before] of ignored) {

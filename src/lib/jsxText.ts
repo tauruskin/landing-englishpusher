@@ -2,7 +2,8 @@
 // object (AC-10: every string a visitor sees must pass the promise check, see formCopy.test.ts).
 // It walks the TypeScript syntax tree, so it sees text however it is written: JSX text, a string
 // or template literal in braces, a ternary or && branch, a string a .map() callback returns, a
-// text-bearing attribute in any quote form, or a module-level string constant used in one of those.
+// text-bearing attribute in any quote form, or a const / let (in any scope, or a field of an object
+// literal) used in one of those.
 import ts from "typescript";
 
 // Attributes and props whose value a visitor sees or a screen reader speaks.
@@ -12,6 +13,7 @@ const TEXT_ATTRIBUTES = new Set([
   "placeholder",
   "label",
   "hint",
+  "error",
   "aria-label",
   "aria-description",
   "aria-roledescription",
@@ -19,33 +21,55 @@ const TEXT_ATTRIBUTES = new Set([
   "aria-placeholder",
 ]);
 
-const hasLetter = (text: string) => /[A-Za-z]/.test(text);
+// Text a visitor reads: any letter, digit or currency sign (a bare "₴500" is a price) once HTML
+// entities such as &nbsp; are taken out.
+const hasText = (text: string) => /[\p{L}\p{N}\p{Sc}]/u.test(text.replace(/&(?:[a-z]+|#\d+|#x[\da-f]+);/gi, ""));
 
 // Returns each hard-coded user-facing string found in the source, in source order.
 export function hardCodedText(source: string): string[] {
   const file = ts.createSourceFile("component.tsx", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   const found: string[] = [];
 
-  // Top-level `const NAME = "text"`: rendering {NAME} is the same as writing the text in place.
-  const constants = new Map<string, string>();
-  for (const statement of file.statements) {
-    if (!ts.isVariableStatement(statement) || !(statement.declarationList.flags & ts.NodeFlags.Const)) continue;
-    for (const decl of statement.declarationList.declarations) {
-      const init = decl.initializer;
-      if (ts.isIdentifier(decl.name) && init && ts.isStringLiteralLike(init)) constants.set(decl.name.text, init.text);
+  // Every `const` / `let NAME = …` in any scope: rendering {NAME} renders what it was set to. A name
+  // declared in several scopes keeps all its initializers, so each one is checked.
+  const declared = new Map<string, ts.Expression[]>();
+  const collect = (node: ts.Node): void => {
+    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) {
+      declared.set(node.name.text, [...(declared.get(node.name.text) ?? []), node.initializer]);
     }
-  }
+    ts.forEachChild(node, collect);
+  };
+  collect(file);
+
+  // The expressions a name or a field path (T.a.b) of a local object literal stands for.
+  const valuesOf = (node: ts.Expression): ts.Expression[] => {
+    if (ts.isIdentifier(node)) return declared.get(node.text) ?? [];
+    if (ts.isPropertyAccessExpression(node)) {
+      return valuesOf(node.expression).flatMap((value) => {
+        if (!ts.isObjectLiteralExpression(value)) return [];
+        return value.properties.flatMap((prop) =>
+          ts.isPropertyAssignment(prop) && prop.name.getText(file) === node.name.text ? [prop.initializer] : [],
+        );
+      });
+    }
+    return [];
+  };
+  const resolving = new Set<ts.Node>();
 
   // An expression whose value ends up on screen: report the text it can produce.
   const rendered = (node: ts.Expression): void => {
     if (ts.isStringLiteralLike(node)) {
-      if (hasLetter(node.text)) found.push(node.text);
+      if (hasText(node.text)) found.push(node.text);
     } else if (ts.isTemplateExpression(node)) {
       const parts = [node.head.text, ...node.templateSpans.map((span) => span.literal.text)];
-      if (parts.some(hasLetter)) found.push(node.getText(file));
-    } else if (ts.isIdentifier(node)) {
-      const text = constants.get(node.text);
-      if (text !== undefined && hasLetter(text)) found.push(text);
+      if (parts.some(hasText)) found.push(node.getText(file));
+    } else if (ts.isIdentifier(node) || ts.isPropertyAccessExpression(node)) {
+      for (const value of valuesOf(node)) {
+        if (resolving.has(value)) continue; // const a = b; const b = a;
+        resolving.add(value);
+        rendered(value);
+        resolving.delete(value);
+      }
     } else if (ts.isParenthesizedExpression(node) || ts.isAsExpression(node) || ts.isNonNullExpression(node)) {
       rendered(node.expression);
     } else if (ts.isConditionalExpression(node)) {
@@ -65,8 +89,8 @@ export function hardCodedText(source: string): string[] {
       if (ts.isPropertyAccessExpression(node.expression)) rendered(node.expression.expression);
       for (const arg of node.arguments) if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) returned(arg);
     }
-    // Anything else (JSX, property access such as COPY.line, calls of copy functions) is either
-    // visited on its own or comes from elsewhere.
+    // Anything else (JSX, an imported COPY.line, calls of copy functions) is either visited on its
+    // own or comes from elsewhere.
   };
 
   const returned = (fn: ts.ArrowFunction | ts.FunctionExpression): void => {
@@ -81,7 +105,7 @@ export function hardCodedText(source: string): string[] {
   const visit = (node: ts.Node): void => {
     if (ts.isJsxText(node)) {
       const text = node.text.trim();
-      if (hasLetter(text)) found.push(text);
+      if (hasText(text)) found.push(text);
     } else if (ts.isJsxExpression(node) && node.expression && (ts.isJsxElement(node.parent) || ts.isJsxFragment(node.parent))) {
       rendered(node.expression);
     } else if (ts.isJsxAttribute(node) && TEXT_ATTRIBUTES.has(node.name.getText(file)) && node.initializer) {

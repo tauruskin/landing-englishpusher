@@ -358,7 +358,7 @@
         "src/lib/jsxText.test.ts"
       ],
       "file": "docs/features/landing-page/tasks/t18-jsx-guard-hardening.md",
-      "status": "todo"
+      "status": "done"
     }
   ]
 }
