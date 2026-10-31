@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Hero from "../components/Hero.astro";
+import Marquee from "../components/Marquee.astro";
 import TourStrip from "../components/TourStrip.astro";
 import InterimBlock from "../components/InterimBlock.astro";
 import Footer from "../components/Footer.astro";
@@ -14,11 +15,14 @@ const copy = {
 ---
 
 <BaseLayout title={copy.title} description={copy.description}>
-  <main class="mx-auto max-w-3xl px-6">
+  <main>
     <Hero />
-    <TourStrip />
-    <InterimBlock />
-    <Footer />
+    <Marquee />
+    <div class="mx-auto max-w-3xl px-6">
+      <TourStrip />
+      <InterimBlock />
+      <Footer />
+    </div>
   </main>
   <TrialDialog client:idle />
 </BaseLayout>

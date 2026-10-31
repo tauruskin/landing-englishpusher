@@ -47,3 +47,9 @@ test("the footer links Tetiana's Instagram and LinkedIn in a new tab", () => {
     assert.match(tag, /rel="noopener[^"]*"/);
   }
 });
+
+test("the marquee's second copy is hidden from screen readers", () => {
+  const copies = [...html.matchAll(/<div\b[^>]*data-marquee-copy[^>]*>/g)].map((m) => m[0]);
+  assert.equal(copies.length, 2);
+  assert.equal(copies.filter((tag) => /aria-hidden="true"/.test(tag)).length, 1);
+});
