@@ -1,7 +1,7 @@
 # "How it works" tour strip — design
 
 - Date: 2026-10-31
-- Status: implemented on `feature/tour-strip`; slide 2 waits for the owner's Moodle screenshot
+- Status: implemented on `feature/tour-strip`
 - Roadmap: a first piece of step 3 (sales content). It does not resolve D1; Tetiana approves the copy.
 - Mockups: `.superpowers/brainstorm/406-1793458335/content/` (local, not committed)
 
@@ -36,7 +36,7 @@ The section is placed between `Hero` and `InterimBlock` in `src/pages/index.astr
 | # | Title | Caption (draft, Tetiana approves) | Screenshot |
 |---|---|---|---|
 | 1 | Book a trial lesson | Tell Tetiana about yourself, your level and your goals. | This page's trial form window, captured |
-| 2 | Your course space | Lesson materials and homework in Moodle. | Moodle *Lesson 1. Activation*, listening exercise, phone width, **supplied by the owner** |
+| 2 | Your course space | Lesson materials and homework in Moodle. | Moodle personality-adjectives lesson (audio player + word-matching exercise), phone width, **supplied by the owner**; the logged-in user's avatar is covered |
 | 3 | Practise new words | Flashcards in the EnglishPusher app, between lessons. | `app.englishpusher.in.ua/b1-flashcards/`, captured |
 | 4 | English for work | C1 vocabulary for work: leadership, innovation and business writing. | `app.englishpusher.in.ua/c1-flashcards/?topic=ceo-communication`, captured |
 | 5 | Check your grammar | Short grammar tests, topic by topic. | `grammar.englishpusher.in.ua`, captured |
@@ -118,10 +118,9 @@ The built-page test pins exactly two.
   compressed to about 80–120 KB.
 - Slides 1, 3, 4 and 5 are captured once with headless Chrome (a one-off script, not kept in the
   repo).
-- Slide 2 is converted from the owner's screenshot.
+- Slide 2 is converted from the owner's screenshot, with the account avatar in the Moodle header covered by a white patch.
+  The owner's other screenshots were not used: they show stock photos of people (coursebook material).
 - Every image is checked by eye for the content rules before it is committed.
-- **Until the owner's Moodle screenshot arrives,** slide 2 uses a neutral placeholder in brand
-  colours with no text. The section must not be published with the placeholder.
 
 ## Testing
 

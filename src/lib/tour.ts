@@ -40,7 +40,7 @@ export const TOUR_SLIDES: readonly TourSlide[] = [
     title: "Your course space",
     caption: "Lesson materials and homework in Moodle.",
     image: "/tour/2-moodle.webp",
-    alt: "A Moodle lesson page with a listening exercise and a Check button",
+    alt: "A Moodle lesson page with an audio player and a word-matching exercise",
     width: W,
     height: H,
   },
