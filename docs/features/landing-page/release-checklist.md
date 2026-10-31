@@ -46,10 +46,12 @@ date (and timestamps where asked) when done.
   CtaBand, Footer), the page title and description, the link preview (title, description, image),
   the form's headline and subline, the field error messages, the level and goal pills, the thank-you and the
   send-failed message. Check them against the banned list: no price, no "free", no lesson length,
-  no learning result. The page's wording comes from `INTERIM_COPY` in
-  [`src/lib/site.ts`](../../../src/lib/site.ts) and the section files in
-  [`src/components/`](../../../src/components/). The form's wording is in three files; the tour's
-  and the page sections' in two more:
+  no learning result. The page's wording comes from
+  [`src/lib/landingCopy.ts`](../../../src/lib/landingCopy.ts), the page title and description in
+  [`src/pages/index.astro`](../../../src/pages/index.astro), and the Book link label in
+  [`src/components/BookTrialLink.astro`](../../../src/components/BookTrialLink.astro);
+  `INTERIM_COPY` in [`src/lib/site.ts`](../../../src/lib/site.ts) is only the noindex switch
+  (AC-11). The form's wording is in three files; the tour's and the page sections' in two more:
   - `FORM_COPY` in [`src/lib/formCopy.ts`](../../../src/lib/formCopy.ts): every string the form and
     its window write, including the screen-reader labels;
   - [`src/lib/validate.ts`](../../../src/lib/validate.ts): the field error messages ("Please enter

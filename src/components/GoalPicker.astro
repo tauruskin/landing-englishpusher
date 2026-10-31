@@ -57,7 +57,7 @@ const tileSkin: Record<GoalValue, string> = {
       {
         PICKER.tiles.map((tile) => (
           <button type="button" data-goal={tile.value} data-label={tile.label} aria-pressed="false" class:list={[tileBase, layout[tile.value], tileSkin[tile.value]]}>
-            <span aria-hidden="true" class="absolute right-5 top-5 grid h-8 w-8 scale-60 place-items-center rounded-full bg-brand text-stone-900 opacity-0 transition duration-300 group-aria-pressed:scale-100 group-aria-pressed:opacity-100">
+            <span aria-hidden="true" class="absolute right-5 top-5 grid h-8 w-8 scale-60 place-items-center rounded-full bg-brand text-stone-900 opacity-0 transition duration-300 motion-reduce:transition-none group-aria-pressed:scale-100 group-aria-pressed:opacity-100">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7" /></svg>
             </span>
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f07c1a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d={icons[tile.value]} /></svg>
