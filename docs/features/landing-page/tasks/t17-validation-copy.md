@@ -9,8 +9,8 @@ files_hint: ["src/lib/formCopy.test.ts", "docs/features/landing-page/release-che
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 # T17 — Scan the validation messages for promises and name validate.ts and options.ts in the AC-10 approval pointer
@@ -23,9 +23,9 @@ Review [review-2026-10-31-2.md](../_review/review-2026-10-31-2.md) N4. The valid
 
 ## Checklist
 
-- [ ] `formCopy.test.ts`: `findPromises` over every `validateTrialForm` message (empty form; invalid email) returns `[]`.
-- [ ] Test header and checklist approval item name `validate.ts` and `options.ts` alongside `FORM_COPY`.
+- [x] `formCopy.test.ts`: `findPromises` over every `validateTrialForm` message (empty form; invalid email) returns `[]`.
+- [x] Test header and checklist approval item name `validate.ts` and `options.ts` alongside `FORM_COPY`.
 
 ## Definition of Done
 
-- [ ] `npm test` green; checklist links resolve.
+- [x] `npm test` green; checklist links resolve.
