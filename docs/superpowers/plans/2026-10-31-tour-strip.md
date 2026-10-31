@@ -18,6 +18,8 @@ capture.
 
 **Spec:** [`docs/superpowers/specs/2026-10-31-tour-strip-design.md`](../specs/2026-10-31-tour-strip-design.md)
 
+> **Executed 2026-10-31.** Code reviews changed some details after this plan was written. `stepLabel` and the per-card `aria-label` were removed. The list uses `role="list"` with `aria-labelledby`. The step number is shown in an orange disc. All images are lazy. The strip bleeds to the column edge. Dots light for every card fully in view. The spec and the code are the source of truth; this plan is the historical record.
+
 ---
 
 ## Before you start

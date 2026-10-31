@@ -1,7 +1,7 @@
 # "How it works" tour strip — design
 
 - Date: 2026-10-31
-- Status: approved in brainstorming, awaiting spec review
+- Status: implemented on `feature/tour-strip`; slide 2 waits for the owner's Moodle screenshot
 - Roadmap: a first piece of step 3 (sales content). It does not resolve D1; Tetiana approves the copy.
 - Mockups: `.superpowers/brainstorm/406-1793458335/content/` (local, not committed)
 
@@ -92,10 +92,10 @@ export const TOUR_SLIDES: readonly TourSlide[];
   clipped. The scrollbar is hidden
   visually, and the container keeps `tabindex="0"` with a visible focus ring so the keyboard
   arrow keys scroll it.
-- The inline `<script>`, about 15 lines with no framework, is progressive:
+- The inline `<script>`, about 35 lines with no framework, is progressive:
   - it shows the ‹ › buttons, which are hidden until it runs;
   - each button press scrolls by one card width;
-  - on `scroll` it updates the current dot and disables a button at either end.
+  - on `scroll` and `resize` it lights the dot of every card fully in view and disables a button at either end.
   - Without the script, swiping and scrolling still work and the buttons stay hidden.
 - **Accessibility:**
   - The list announces position itself; the `<li>`s carry no `aria-label`.
