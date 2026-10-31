@@ -2,22 +2,25 @@
 // (a copy, not a shared package — a HubSpot field change goes into both repos).
 // Landing changes: the answers are owned by the parent (TrialDialog keeps them across openings),
 // Send follows planSend() from src/lib/trialSend.ts, and the send goes to the live form only on the
-// published host (formIdFor) with the entry address as pageUri.
-import { useState, type FormEvent, type ReactNode } from "react";
+// published host (formIdFor) with the entry address as pageUri. What a result shows and records
+// comes from outcomeOf(): the send-failed banner also links LinkedIn and records trial_form_error.
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import confetti from "canvas-confetti";
 import { Loader2 } from "lucide-react";
-import { GOALS, LEVELS, type TrialFormValues } from "../../lib/options.ts";
+import { GOALS, INSTAGRAM_URL, LEVELS, LINKEDIN_URL, type TrialFormValues } from "../../lib/options.ts";
+import { pushEvent } from "../../lib/events.ts";
 import type { TrialFormErrors } from "../../lib/validate.ts";
 import { readEntryAddress, readHutk, submitTrialForm, type SubmitResult } from "../../lib/hubspot.ts";
 import { PORTAL_ID, formIdFor } from "../../lib/site.ts";
-import { planSend } from "../../lib/trialSend.ts";
+import { outcomeOf, planSend } from "../../lib/trialSend.ts";
 
 // ---------------------------------------------------------------------------
 // TrialForm — the "Book a trial lesson" form inside the TrialDialog window.
 // Name and email are required; level, goals, messenger and message are
-// optional.
+// optional. generate_lead is recorded only after HubSpot confirms the send.
 // ---------------------------------------------------------------------------
 
-type Status = "idle" | "sending";
+type Status = "idle" | "sending" | "error" | "done";
 
 const labelClass = "text-sm font-semibold text-neutral-800";
 
@@ -73,19 +76,26 @@ function Field({
   );
 }
 
+const linkClass = "font-semibold underline";
+
 export type TrialFormProps = {
   values: TrialFormValues;
   onChange: (values: TrialFormValues) => void;
-  /** The CRM answered (or the send failed / timed out). */
-  onResult?: (result: SubmitResult) => void;
-  /** The hidden trap field was filled: nothing was sent. */
-  onTrapped?: () => void;
+  /** The thank-you's Close button. */
+  onClose: () => void;
+  /** A thank-you was shown: the next opening of the window starts empty (AC-03). */
+  onSent: () => void;
 };
 
-export default function TrialForm({ values, onChange, onResult, onTrapped }: TrialFormProps) {
+export default function TrialForm({ values, onChange, onClose, onSent }: TrialFormProps) {
   const [errors, setErrors] = useState<TrialFormErrors>({});
   const [status, setStatus] = useState<Status>("idle");
   const [honeypot, setHoneypot] = useState("");
+  const doneHeading = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (status === "done") doneHeading.current?.focus();
+  }, [status]);
 
   const set = <K extends keyof TrialFormValues>(key: K, value: TrialFormValues[K]) => {
     onChange({ ...values, [key]: value });
@@ -101,15 +111,16 @@ export default function TrialForm({ values, onChange, onResult, onTrapped }: Tri
     const plan = planSend(values, honeypot);
     setErrors(plan.action === "invalid" ? plan.errors : {});
     if (plan.action === "invalid") {
+      setStatus("idle"); // hides a send-failed banner from an earlier attempt; records nothing
       document.getElementById(plan.focusId)?.focus();
       return;
     }
     if (plan.action === "trapped") {
-      onTrapped?.(); // a bot filled the hidden field: pretend it worked, send nothing
+      show("trapped"); // a bot filled the hidden field: pretend it worked, send nothing
       return;
     }
     setStatus("sending");
-    const result = await submitTrialForm({
+    const result: SubmitResult = await submitTrialForm({
       portalId: PORTAL_ID,
       formId: formIdFor(window.location.hostname),
       values,
@@ -117,9 +128,39 @@ export default function TrialForm({ values, onChange, onResult, onTrapped }: Tri
       pageName: document.title,
       hutk: readHutk(document.cookie),
     });
-    setStatus("idle");
-    onResult?.(result);
+    show(result);
   };
+
+  const show = (result: SubmitResult | "trapped") => {
+    const outcome = outcomeOf(result);
+    setStatus(outcome.view);
+    for (const event of outcome.events) pushEvent(window as { dataLayer?: unknown[] }, event);
+    if (outcome.emptyNextOpening) onSent();
+    if (outcome.view === "done") celebrate();
+  };
+
+  if (status === "done") {
+    return (
+      <div role="status" className="flex flex-col items-center gap-3 py-6 text-center">
+        <img src="/teacher-celebrate.png" alt="" className="h-40 w-auto select-none" draggable={false} />
+        <h2
+          ref={doneHeading}
+          tabIndex={-1}
+          className="break-words font-display text-2xl font-bold text-neutral-900 outline-none"
+        >
+          Thank you, {values.firstname.trim()}! 🎉
+        </h2>
+        <p className="text-[15px] text-neutral-600">I'll contact you soon.</p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-2 rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand/90"
+        >
+          Close
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5 font-body">
@@ -254,6 +295,20 @@ export default function TrialForm({ values, onChange, onResult, onTrapped }: Tri
         </label>
       </div>
 
+      {status === "error" && (
+        <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          Sorry, your request did not go through. Please try again or write to me on{" "}
+          <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
+            Instagram
+          </a>{" "}
+          or{" "}
+          <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className={linkClass}>
+            LinkedIn
+          </a>
+          .
+        </p>
+      )}
+
       <button
         type="submit"
         disabled={status === "sending"}
@@ -269,4 +324,18 @@ export default function TrialForm({ values, onChange, onResult, onTrapped }: Tri
       </button>
     </form>
   );
+}
+
+function celebrate() {
+  try {
+    confetti({
+      particleCount: 90,
+      spread: 75,
+      origin: { y: 0.6 },
+      colors: ["#f07c1a", "#fbbf24", "#60a5fa"],
+      disableForReducedMotion: true,
+    });
+  } catch {
+    /* decoration only */
+  }
 }
