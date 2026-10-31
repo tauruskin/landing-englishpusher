@@ -11,7 +11,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "node --test \"src/**/*.test.ts\"",
-    "check": "astro check"
+    "check": "astro check",
+    "test:built": "node --test \"scripts/*.test.ts\""
   },
   "dependencies": {
     "@astrojs/react": "^7.1.2",

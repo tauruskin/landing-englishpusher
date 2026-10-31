@@ -1,0 +1,18 @@
+---
+import BookTrialLink from "./BookTrialLink.astro";
+
+// Interim copy (AC-10). Tetiana approves the wording before publishing (release checklist).
+const copy = {
+  heading: "Start with a trial lesson",
+  lines: [
+    "Tell Tetiana a little about yourself, your level and what you want English for.",
+    "She will get in touch to arrange a time.",
+  ],
+};
+---
+
+<section class="flex flex-col items-start gap-4 rounded-3xl bg-white px-6 py-10 shadow-sm sm:px-10">
+  <h2 class="font-display text-2xl font-bold text-neutral-900 sm:text-3xl">{copy.heading}</h2>
+  {copy.lines.map((line) => <p class="max-w-xl text-neutral-600">{line}</p>)}
+  <div class="mt-2"><BookTrialLink /></div>
+</section>

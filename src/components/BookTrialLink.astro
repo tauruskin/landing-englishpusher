@@ -1,0 +1,29 @@
+---
+// A plain link that opens the trial form window (ADR-0002): TrialDialog opens on #trial-lesson and,
+// once hydrated, intercepts clicks on these links. Looks like the app's button (brand pill +
+// CalendarCheck icon, inlined so no React is needed). No element may carry id="trial-lesson".
+const copy = { label: "Book a trial lesson" };
+---
+
+<a
+  href="#trial-lesson"
+  data-trial-link
+  class="inline-flex w-fit items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path
+      d="M3 10h18"></path><path d="m9 16 2 2 4-4"></path>
+  </svg>
+  {copy.label}
+</a>

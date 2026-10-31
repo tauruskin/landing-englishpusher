@@ -1,12 +1,20 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import InterimBlock from "../components/InterimBlock.astro";
+import Footer from "../components/Footer.astro";
+
+// Interim copy (AC-10): neutral title and description, no "free", price, length or outcome.
+const copy = {
+  title: "EnglishPusher — English lessons with Tetiana",
+  description: "Individual English lessons with Tetiana for adults and IT professionals. Book a trial lesson.",
+};
 ---
 
-<BaseLayout
-  title="EnglishPusher — English lessons with Tetiana"
-  description="Individual English lessons for adults and IT professionals. Book a free trial lesson."
->
-  <main class="mx-auto max-w-3xl px-6 py-24">
-    <h1 class="text-4xl font-bold text-brand">EnglishPusher</h1>
+<BaseLayout title={copy.title} description={copy.description}>
+  <main class="mx-auto max-w-3xl px-6">
+    <Hero />
+    <InterimBlock />
+    <Footer />
   </main>
 </BaseLayout>

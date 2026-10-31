@@ -132,7 +132,7 @@
         "src/components/BookTrialLink.astro"
       ],
       "file": "docs/features/landing-page/tasks/t07-static-sections.md",
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "T8",
