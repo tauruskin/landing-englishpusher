@@ -297,12 +297,12 @@
         "AC-05",
         "AC-08"
       ],
-      "dod": "release-checklist.md: the AC-08 trap step focuses company_url from the console and types a real key before sending; the offline-failure row adds 'press Send again while offline: one more trial_form_error (network), still no generate_lead'; links resolve.",
+      "dod": "release-checklist.md: the AC-08 trap step fills company_url from the console with the native value setter plus an input event (which React's onChange sees) before sending; the offline-failure row adds 'press Send again while offline: one more trial_form_error (network), still no generate_lead'; links resolve.",
       "files_hint": [
         "docs/features/landing-page/release-checklist.md"
       ],
       "file": "docs/features/landing-page/tasks/t15-checklist-trap-retry.md",
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "T16",

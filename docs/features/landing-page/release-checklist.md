@@ -77,9 +77,18 @@ date (and timestamps where asked) when done.
   - [ ] **AC-08** — set DevTools network throttling to "Slow 3G" and send a valid form. The Send
     button shows that it is sending (spinner, disabled) until HubSpot answers; there is no thank-you
     before that, and no `generate_lead`.
-  - [ ] **AC-08** — trap field: in the Elements panel, type any text into the hidden `company_url`
-    input, then send a valid form. A thank-you is shown, but no request goes to `api.hsforms.com`
-    and nothing is added to `dataLayer`.
+  - [ ] **AC-08** — trap field: fill a valid form, then fill the hidden `company_url` field from
+    the console. It is a React-controlled input, so typing into it in the Elements panel changes
+    nothing; use the native setter plus an `input` event, which React does see:
+
+    ```js
+    const trap = document.querySelector('input[name="company_url"]');
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(trap, "bot");
+    trap.dispatchEvent(new Event("input", { bubbles: true }));
+    ```
+
+    Then press Send. A thank-you is shown, but no request goes to `api.hsforms.com` and nothing is
+    added to `dataLayer`.
   - [ ] **AC-01** — send a valid form with first name "TEST Anna". The thank-you reads "Thank you,
     TEST Anna!", and `dataLayer` gets exactly one `generate_lead` with `form_name: "trial_lesson"`,
     after HubSpot's answer. The submission is on the Test form.
@@ -87,7 +96,9 @@ date (and timestamps where asked) when done.
     email. Both show the identical thank-you; nothing hints that the email was already known.
 - [ ] **Operator** — local failure: with the network switched off in DevTools, send again. The
   banner shows the Instagram and LinkedIn links, every answer is kept, and `dataLayer` gets one
-  `trial_form_error` with `error_kind: "network"` and no `generate_lead`. Proves AC-05 and AC-08.
+  `trial_form_error` with `error_kind: "network"` and no `generate_lead`. Press Send again, still
+  offline: `dataLayer` gets one more `trial_form_error` with `error_kind: "network"`, the answers
+  are still kept, and there is still no `generate_lead`. Proves AC-05 and AC-08.
 - [ ] **Operator** — accessibility: an axe scan of the page with the form open (0 serious or
   critical issues) and a Lighthouse accessibility score ≥ 95. Proves NFR Accessibility.
 - [ ] **Operator** — one screen-reader pass (NVDA or VoiceOver): open the form from a Book link →

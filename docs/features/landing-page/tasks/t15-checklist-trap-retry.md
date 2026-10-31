@@ -9,8 +9,8 @@ files_hint: ["docs/features/landing-page/release-checklist.md"]
 owner: "Oleksandr Pushkar (Operator)"
 estimate: "S"
 context_budget: "S"
-status: "todo"
-step: "—"
+status: "done"
+step: "COMMIT"
 ---
 
 # T15 — Release checklist: a trap-field step that fires React's onChange, and the retry clause of the offline row
@@ -23,9 +23,9 @@ Review [review-2026-10-31-2.md](../_review/review-2026-10-31-2.md) N1 + N2. `com
 
 ## Checklist
 
-- [ ] The AC-08 trap step: in the console run `document.querySelector('input[name=company_url]').focus()`, press a letter key, then send a valid form.
-- [ ] The offline-failure row: press Send again while still offline → one more `trial_form_error` with `error_kind: "network"`, still no `generate_lead`.
+- [x] The AC-08 trap step: fill a valid form, then set `company_url` from the console with the native `HTMLInputElement` value setter and dispatch an `input` event (React's `onChange` sees it; a key press after `focus()` from the console would go to the console), then press Send.
+- [x] The offline-failure row: press Send again while still offline → one more `trial_form_error` with `error_kind: "network"`, still no `generate_lead`.
 
 ## Definition of Done
 
-- [ ] Both rows read as above; links in the checklist resolve.
+- [x] Both rows read as above; links in the checklist resolve.
