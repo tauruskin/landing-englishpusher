@@ -9,6 +9,7 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import TrialForm from "./TrialForm.tsx";
 import { EMPTY_VALUES, type TrialFormValues } from "../../lib/options.ts";
+import { mergeGoals } from "../../lib/goals.ts";
 import { pushEvent } from "../../lib/events.ts";
 import { FORM_COPY } from "../../lib/formCopy.ts";
 import {
@@ -93,6 +94,26 @@ export default function TrialDialog() {
       document.removeEventListener("click", onClick);
     };
   }, [openWindow]);
+
+  // Goals picked in the page's goal picker (redesign spec): tick them in the form. The picker sets
+  // window.__pendingTrialGoals (read once on mount, for a click before hydration) and dispatches
+  // a "trial:goals" event (for clicks after hydration).
+  useEffect(() => {
+    const page = window as Window & { __pendingTrialGoals?: unknown };
+    const addGoals = (goals: unknown) => {
+      if (!Array.isArray(goals)) return;
+      const picked = goals.filter((goal): goal is string => typeof goal === "string");
+      setValues((v) => ({ ...v, goals: mergeGoals(v.goals, picked) }));
+    };
+    addGoals(page.__pendingTrialGoals);
+    delete page.__pendingTrialGoals;
+    const onGoals = (e: Event) => {
+      addGoals((e as CustomEvent<{ goals?: unknown }>).detail?.goals);
+      delete page.__pendingTrialGoals;
+    };
+    window.addEventListener("trial:goals", onGoals);
+    return () => window.removeEventListener("trial:goals", onGoals);
+  }, []);
 
   // While open: Escape closes, Tab stays inside, the page behind is inert and does not scroll, focus
   // goes to the first field. On close: undo all that, then return focus to the opener.

@@ -34,9 +34,16 @@ test("visible text, title and link-preview text make no promises (AC-10)", () =>
   for (const text of texts) assert.deepEqual(findPromises(text), [], text.slice(0, 120));
 });
 
-test("exactly two Book links point at #trial-lesson and nothing has that id (ADR-0002)", () => {
-  assert.equal([...html.matchAll(/<a\b[^>]*href="#trial-lesson"/g)].length, 2);
+test("exactly three Book links point at #trial-lesson and nothing has that id (ADR-0002)", () => {
+  // hero, the goal picker's floating bar, the call-to-action panel (InterimBlock until Task 8)
+  assert.equal([...html.matchAll(/<a\b[^>]*href="#trial-lesson"/g)].length, 3);
   assert.doesNotMatch(html, /id="trial-lesson"/);
+});
+
+test("the goal picker has six unpressed goal buttons", () => {
+  const tiles = [...html.matchAll(/<button\b[^>]*data-goal="[^"]+"[^>]*>/g)].map((m) => m[0]);
+  assert.equal(tiles.length, 6);
+  for (const tag of tiles) assert.match(tag, /aria-pressed="false"/);
 });
 
 test("the footer links Tetiana's Instagram and LinkedIn in a new tab", () => {
