@@ -68,7 +68,7 @@
         "src/lib/events.test.ts"
       ],
       "file": "docs/features/landing-page/tasks/t04-events.md",
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "T5",
